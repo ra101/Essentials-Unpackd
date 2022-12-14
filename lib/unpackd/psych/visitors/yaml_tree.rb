@@ -46,15 +46,15 @@ if defined?(Psych::VERSION) && Psych::VERSION == '2.0.0'
     module Visitors
       class YAMLTree < Psych::Visitors::Visitor
         class Registrar
-          alias_method :rvpacker_original_initialize, :initialize
+          alias_method :unpackd_original_initialize, :initialize
           def initialize
-            rvpacker_original_initialize
+            unpackd_original_initialize
             @obj_to_obj = {}
           end
 
-          alias_method :rvpacker_original_register, :register
+          alias_method :unpackd_original_register, :register
           def register(target, node)
-            rvpacker_original_register(target, node)
+            unpackd_original_register(target, node)
             @obj_to_obj[target.object_id] = target
           end
         end

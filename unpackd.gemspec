@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'rvpacker/version'
+require 'unpackd/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'rvpacker'
-  spec.version       = Rvpacker::VERSION
+  spec.name          = 'unpackd'
+  spec.version       = Unpackd::VERSION
   spec.authors       = ["ra101", "Howard Jeng", "Andrew Kesterson", 'Solistra']
   spec.email         = ['ping@ra101.dev']
   spec.summary       = %q{Pack and unpack Pokemon Essentials Data files}
@@ -13,12 +13,12 @@ Gem::Specification.new do |spec|
     A tool to pack and unpack binary Pokemon Essentials Data to and from YAML so
     it can be version-controlled and collaborated on.
   ).gsub(/\s+/, ' ').strip
-  spec.homepage      = "https://github.com/ra101/rvpacker"
+  spec.homepage      = "https://github.com/ra101/unpackd"
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.executables   = spec.files.grep(%r{^bin/}) { 'unpackd' }
   spec.require_paths = ['lib']
 
   spec.add_dependency "optimist"

@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require 'rvpacker/psych/visitors/yaml_tree'
+require 'unpackd/psych/visitors/yaml_tree'
 require 'fileutils'
 require 'zlib'
 require 'pp'

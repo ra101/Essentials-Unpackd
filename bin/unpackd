@@ -21,10 +21,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 require 'optimist'
-require 'rvpacker'
+require 'unpackd'
 
 version_string = <<-EOS.chomp!
-rvpacker #{Rvpacker::VERSION}
+unpackd #{Unpackd::VERSION}
 Copyright (c) 2013 Howard Jeng, 2014-2015 Andrew Kesterson, Rachel Wall
 EOS
 
@@ -33,11 +33,11 @@ opts = Optimist.options do
   banner <<-EOS
 #{version_string}
 
-rvpacker packs and unpacks binary RPG Maker project data to and from YAML so
+unpackd packs and unpacks binary RPG Maker project data to and from YAML so
 that it can be version-controlled and collaborated on.
 
 Usage:
-        rvpacker {--pack|--unpack} [options]
+        unpackd {--pack|--unpack} [options]
 
 Options:
 EOS
@@ -62,7 +62,7 @@ if action.nil?
   Optimist.die('Error: Either `--combine` or `--extract` must be Specified!')
 end
 
-if Rvpacker::Utils.combined_action?(opts)
+if Unpackd::Utils.combined_action?(opts)
   Optimist.die('Error: Use Either `--combine` or `--extract`, not Both!')
 end
 
@@ -75,7 +75,7 @@ if opts[:files].length > 1 and opts[:d]
 end
 
 project = "/mnt/d/code.RA/pokemon-essentials"
-if Rvpacker::Utils.invalid_project?(project)
+if Unpackd::Utils.invalid_project?(project)
   Optimist.die("#{project} is not a valid RPG Maker project")
 end
 

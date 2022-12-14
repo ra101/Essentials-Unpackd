@@ -19,9 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require 'rvpacker/basic_coder'
-require 'rvpacker/rpg'
-require 'rvpacker/utils'
+require 'unpackd/basic_coder'
+require 'unpackd/rpg'
+require 'unpackd/utils'
 require 'scanf'
 
 class Table
@@ -176,7 +176,7 @@ module RGSS
     end)
     reset_const(RPG::EventCommand, :MOVE_LIST_CODE, 209)
 
-    Rvpacker::BasicCoder.set_ivars_methods
+    Unpackd::BasicCoder.set_ivars_methods
   end
 
   $FLOW_CLASSES = [
@@ -202,7 +202,7 @@ module RGSS
   end
 
   class ::Game_Switches
-    include Rvpacker::BasicCoder, Rvpacker::Utils::Collections
+    include Unpackd::BasicCoder, Unpackd::Utils::Collections
 
     def encode(_, value)
       array_to_hash(value)
@@ -214,7 +214,7 @@ module RGSS
   end
 
   class ::Game_Variables
-    include Rvpacker::BasicCoder, Rvpacker::Utils::Collections
+    include Unpackd::BasicCoder, Unpackd::Utils::Collections
 
     def encode(_, value)
       array_to_hash(value)
@@ -226,7 +226,7 @@ module RGSS
   end
 
   class ::Game_SelfSwitches
-    include Rvpacker::BasicCoder
+    include Unpackd::BasicCoder
 
     def encode(_, value)
       Hash[value.map { |(key, val)| next [sprintf('%03d %03d %s', key, val)] }]
@@ -238,7 +238,7 @@ module RGSS
   end
 
   class ::Game_System
-    include Rvpacker::BasicCoder
+    include Unpackd::BasicCoder
 
     def encode(name, value)
       name == 'version_id' ? map_version(value) : value

@@ -18,10 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require 'rvpacker/utils/collections'
+require 'unpackd/utils/collections'
 
-module Rvpacker
-  # Defines various utility methods for use by `rvpacker`.
+module Unpackd
+  # Defines various utility methods for use by `unpackd`.
   module Utils
 
     # Check if the project dir has `Game.rxproj`

@@ -19,44 +19,49 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-module Rvpacker
-  module BasicCoder
-    INCLUDED_CLASSES = []
+require 'unpackd/basic_coder'
 
-    def self.included(other)
-      INCLUDED_CLASSES << other
-    end
+module RPG
+  class System
+    include Unpackd::BasicCoder
+    HASHED_VARS = %w(variables switches)
+  end
 
-    def encode_with(coder)
-      ivars.each do |ivar|
-        name  = ivar[1..-1]
-        value = instance_variable_get(ivar)
-        coder[name] = encode(name, value)
-      end
-    end
-
-    def encode(_, value)
+  def encode(name, value)
+    if HASHED_VARS.include?(name)
+      array_to_hash(value) { |val| reduce_string(val) }
+    elsif name == 'version_id'
+      map_version(value)
+    else
       value
+    end
+  end
+
+  def decode(name, value)
+    HASHED_VARS.include?(name) ? hash_to_array(value) : value
+  end
+
+  class EventCommand
+    def encode_with(coder)
+      unless instance_variables.length == 3
+        raise 'Unexpected number of instance variables'
+      end
+      clean
+
+      coder.style =
+        case @code
+        when MOVE_LIST_CODE then Psych::Nodes::Mapping::BLOCK
+        else Psych::Nodes::Mapping::FLOW
+        end
+      coder['c'] = @code
+      coder['i'] = @indent
+      coder['p'] = @parameters
     end
 
     def init_with(coder)
-      coder.map.each do |ivar, value|
-        instance_variable_set(:"@#{ivar}", decode(ivar, value))
-      end
-    end
-
-    def decode(_, value)
-      value
-    end
-
-    def ivars
-      instance_variables
-    end
-
-    def self.set_ivars_methods()
-      INCLUDED_CLASSES.each do |c|
-        RGSS.reset_method(c, :ivars, -> { instance_variables.sort })
-      end
+      @code       = coder['c']
+      @indent     = coder['i']
+      @parameters = coder['p']
     end
   end
 end

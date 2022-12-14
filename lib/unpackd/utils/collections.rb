@@ -1,4 +1,4 @@
-module Rvpacker
+module Unpackd
   module Utils
     module Collections
       # Converts the given `array` into a `Hash`.
