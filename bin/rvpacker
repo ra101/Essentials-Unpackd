@@ -47,8 +47,7 @@ EOS
   opt :action, 'Action to perform on the project (pack|unpack)', type: String
   opt :pack, 'Pack YAML into binary RPG Maker data'
   opt :unpack, 'Unpack binary RPG Maker data to YAML'
-  opt :project, 'RPG Maker project directory', short: 'd', type: String
-  opt :project_type, 'Project type (xp|vx|ace)', short: 't', type: String
+  opt :project, 'Absolute Path to Essentials Game Folder, Else current Folder will be Selected', short: 'd', type: String
   opt :force, 'Update target even when source is older than target'
   opt :verbose, 'Print verbose information while processing', short: 'V'
 end
@@ -88,28 +87,7 @@ opts[:project] = File.expand_path(opts[:project])
 unless Rvpacker::Utils.valid_project?(opts[:project])
   Optimist.die("#{opts[:project]} is not a valid RPG Maker project")
 end
-Optimist.die("#{opts[:project]} is a valid RPG Maker project")
 
-# We should only have the `:project_type` key if it has been given by the user.
-# If we have it, coerce it into a symbol for use in `RGSS.serialize`;
-# otherwise, attempt to determine the project type. Fail fast if the project
-# type is invalid or could not be determined.
-if opts[:project_type]
-  opts[:project_type] = opts[:project_type].to_sym
-else
-  opts[:project_type] = Rvpacker::Utils.project_type_for(opts[:project])
-end
-
-unless [:xp, :vx, :ace].any? { |type| opts[:project_type] == type }
-  if opts[:project_type]
-    Optimist.die("#{opts[:project_type]} is not a valid RPG Maker project type")
-  else
-    # NOTE: This is unlikely to happen, but absolutely possible.
-    Optimist.die('Could not determine a valid RPG Maker project type')
-  end
-end
-
-# TODO: Remove the reliance on $VERBOSE for printing information.
 $VERBOSE = opts[:verbose]
 
 # Set up the default extra options passed to `RGSS.serialize`.
@@ -119,4 +97,4 @@ extra_opts = {
   table_width: -1
 }
 
-RGSS.serialize(opts[:project_type].to_sym, action, opts[:project], extra_opts)
+RGSS.serialize(action, opts[:project], extra_opts)

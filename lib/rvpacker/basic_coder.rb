@@ -53,13 +53,9 @@ module Rvpacker
       instance_variables
     end
 
-    def self.set_ivars_methods(version)
+    def self.set_ivars_methods()
       INCLUDED_CLASSES.each do |c|
-        if version == :ace
-          RGSS.reset_method(c, :ivars, -> { instance_variables })
-        else
-          RGSS.reset_method(c, :ivars, -> { instance_variables.sort })
-        end
+        RGSS.reset_method(c, :ivars, -> { instance_variables.sort })
       end
     end
   end

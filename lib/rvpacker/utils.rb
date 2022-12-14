@@ -23,23 +23,11 @@ require 'rvpacker/utils/collections'
 module Rvpacker
   # Defines various utility methods for use by `rvpacker`.
   module Utils
-    # @param directory [String] the directory to obtain the project type for
-    # @return [:xp, :vx, :ace, nil] the project type of the given directory if
-    #   it could be determined, `nil` otherwise
-    def self.project_type_for(directory)
-      case Dir["#{File.expand_path(directory)}/Game.r?proj*"][0]
-      when /Game\.rxproj$/  then :xp
-      when /Game\.rvproj$/  then :vx
-      when /Game\.rvproj2$/ then :ace
-      end
-    end
 
-    # @param directory [String] the directory to test the validity of
-    # @return [Boolean] `true` if the directory is the root of a valid RPG
-    #   Maker project, `false` otherwise
+    # Check if the project dir has `Game.rxproj`
     def self.valid_project?(directory)
-      file = Dir["#{File.expand_path(directory)}/Game.r?proj*"][0]
-      file =~ /Game\.r(?:xproj|vproj2?)$/ ? true : false
+      file = Dir["#{File.expand_path(directory)}/Game.rxproj"][0]
+      file =~ /Game\.rxproj$/ ? true : false
     end
 
     # @param options [Hash{Symbol=>Object}] the options hash to check for

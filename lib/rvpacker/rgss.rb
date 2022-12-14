@@ -163,7 +163,7 @@ module RGSS
    # Script classes serialized in save game files
    [:Game_ActionResult], [:Game_Actor], [:Game_Actors], [:Game_BaseItem],
    [:Game_BattleAction], [:Game_CommonEvent], [:Game_Enemy], [:Game_Event],
-   [:Game_Follower], [:Game_Followers], [:Game_Interpreter], [:Game_Map],
+   [:Game_Follower], [:Game_Followers], [:Game_Map],
    [:Game_Message], [:Game_Party], [:Game_Picture], [:Game_Pictures], [:Game_Player],
    [:Game_System], [:Game_Timer], [:Game_Troop], [:Game_Screen], [:Game_Vehicle],
    [:Interpreter]
@@ -191,18 +191,7 @@ module RGSS
     end
   end
 
-  def self.setup_interpreter(version)
-    # `Game_Interpreter` is marshalled differently in VX Ace.
-    if version == :ace
-      reset_method(Game_Interpreter, :marshal_dump, -> { @data })
-      reset_method(Game_Interpreter, :marshal_load, ->(obj) { @data = obj })
-    else
-      remove_defined_method(Game_Interpreter, :marshal_dump)
-      remove_defined_method(Game_Interpreter, :marshal_load)
-    end
-  end
-
-  def self.setup_event_command(version, options)
+  def self.setup_event_command(options)
     # Format event commands to flow style for the event codes that aren't move
     # commands.
     if options[:round_trip]
@@ -212,22 +201,18 @@ module RGSS
         @parameters[0].rstrip! if @code == 401
       end)
     end
-    reset_const(RPG::EventCommand, :MOVE_LIST_CODE, version == :xp ? 209 : 205)
+    reset_const(RPG::EventCommand, :MOVE_LIST_CODE, 209)
   end
 
-  def self.setup_classes(version, options)
+  def self.setup_classes(options)
     setup_system(options)
-    setup_interpreter(version)
-    setup_event_command(version, options)
-    Rvpacker::BasicCoder.set_ivars_methods(version)
+    setup_event_command(options)
+    Rvpacker::BasicCoder.set_ivars_methods
   end
 
   FLOW_CLASSES = [Color, Tone, RPG::BGM, RPG::BGS, RPG::MoveCommand, RPG::SE]
 
   SCRIPTS_BASE = 'Scripts'
-
-  ACE_DATA_EXT = '.rvdata2'
-  VX_DATA_EXT  = '.rvdata'
   XP_DATA_EXT  = '.rxdata'
   YAML_EXT     = '.yaml'
   RUBY_EXT     = '.rb'

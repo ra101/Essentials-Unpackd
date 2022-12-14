@@ -261,12 +261,12 @@ module RGSS
     end
   end
 
-  def self.serialize(version, direction, directory, options = {})
+  def self.serialize(direction, directory, options = {})
     fail "#{directory} not found" unless File.directory?(directory)
 
-    setup_classes(version, options)
+    setup_classes(options)
     options = options.dup
-    options[:sort] = true if [:vx, :xp].include?(version)
+    options[:sort] = true
     options[:flow_classes] = FLOW_CLASSES
     options[:line_width] ||= 130
 
@@ -284,12 +284,6 @@ module RGSS
 
     dirs.each_value { |d| FileUtils.mkdir(d) unless File.directory?(d) }
 
-    exts = {
-      ace: ACE_DATA_EXT,
-      vx:  VX_DATA_EXT,
-      xp:  XP_DATA_EXT
-    }
-
     yaml_scripts = SCRIPTS_BASE + YAML_EXT
     yaml = {
       directory: dirs[:yaml],
@@ -301,11 +295,11 @@ module RGSS
       dump_save: :dump_yaml_file
     }
 
-    scripts = SCRIPTS_BASE + exts[version]
+    scripts = SCRIPTS_BASE + XP_DATA_EXT
     data = {
       directory: dirs[:data],
       exclude:   [scripts],
-      ext:       exts[version],
+      ext:       XP_DATA_EXT,
       load_file: :load_data_file,
       dump_file: :dump_data_file,
       load_save: :load_save,
