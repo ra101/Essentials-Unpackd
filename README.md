@@ -15,7 +15,7 @@ The RPG and RGSS libraries were originally taken from [SiCrane's YAML importer/e
 $ gem install rvpacker
 ```
 
-### Windows Users
+### Windows Userss
 
 If `gem install rvpacker` complains about being unable to install `psych`, try downloading the `rvpacker` source and installing its dependencies through Bundler:
 
