@@ -11,13 +11,7 @@ _A tool to pack and unpack binary RPG Maker project data to and from YAML so it 
 The RPG and RGSS libraries were originally taken from [SiCrane's YAML importer/exporter](http://www.gamedev.net/topic/646333-rpg-maker-vx-ace-data-conversion-utility/) on the [gamedev.net forums](http://www.gamedev.net/index). Though `rvpacker` is starting to drift from the original libraries, SiCrane still gets original credit for the grand majority of the work that `rvpacker` does.
 
 ## Installation
-```
-$ gem install rvpacker
-```
 
-### Windows Userss
-
-If `gem install rvpacker` complains about being unable to install `psych`, try downloading the `rvpacker` source and installing its dependencies through Bundler:
 
 ```sh
 $ git clone https://github.com/Solistra/rvpacker.git
@@ -26,17 +20,15 @@ $ gem install bundler
 $ bundle install
 ```
 
-Alternatively, you can download the [Ruby DevKit](http://rubyinstaller.org/downloads) and install it by following [these instructions](https://github.com/oneclick/rubyinstaller/wiki/Development-Kit) -- this works for many users, but not everyone; as such, you may still end up having to install the dependencies using `bundle install`.
-
 ## Usage
 
 ```
-$ rvpacker --help
+$ bundle exec rvpacker --help
 rvpacker packs and unpacks binary RPG Maker project data to and from YAML so
 that it can be version-controlled and collaborated on.
 
 Usage:
-        rvpacker {--pack|--unpack} [options]
+        bundle exec rvpacker {--pack|--unpack} [options]
 
 Options:
   -a, --action=<s>          Action to perform on the project (pack|unpack)
@@ -54,7 +46,7 @@ Options:
 For example, to unpack an RPG Maker VX Ace project in ~/Documents/RPGVXAce/Project1:
 
 ```
- rvpacker --unpack --project ~/Documents/RPGVXAce/Project1 --project-type ace
+ bundle exec rvpacker --unpack --project ~/Documents/RPGVXAce/Project1 --project-type ace
 ```
 
 ...this will expand all of the project's binary Data/ files into (PROJECT)/YAML/ as YAML files; scripts will be unpacked as individual .rb files into (PROJECT)/Scripts/.
@@ -62,7 +54,7 @@ For example, to unpack an RPG Maker VX Ace project in ~/Documents/RPGVXAce/Proje
 To take a previously unpacked project and pack it back up:
 
 ```
-rvpacker --pack --project ~/Documents/RPGVXAce/Project1 --project-type ace
+bundle exec rvpacker --pack --project ~/Documents/RPGVXAce/Project1 --project-type ace
 ```
 
 ...this will take all of the YAML files in (PROJECT)/YAML (and all of the scripts in (PROJECT)/Scripts) and repack all of your (PROJECT)/Data/ files. You can trust this to completely reassemble your Data/ directory as long as both the Scripts/ and YAML/ directories remain intact.

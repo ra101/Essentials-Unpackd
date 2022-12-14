@@ -20,8 +20,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-require 'trollop'
+require 'optimist'
 require 'rvpacker'
 
 version_string = <<-EOS.chomp!
@@ -29,7 +28,7 @@ rvpacker #{Rvpacker::VERSION}
 Copyright (c) 2013 Howard Jeng, 2014-2015 Andrew Kesterson, Rachel Wall
 EOS
 
-opts = Trollop.options do
+opts = Optimist.options do
   version version_string
   banner <<-EOS
 #{version_string}
@@ -57,7 +56,7 @@ end
 
 # Fail fast if any of the `pack`, `unpack`, or `action` options are combined.
 if Rvpacker::Util.combined_action?(opts)
-  Trollop.die('--pack, --unpack, and --action cannot be combined')
+  Optimist.die('--pack, --unpack, and --action cannot be combined')
 end
 
 # Attempt to parse which action to perform (packing YAML to binary data or
@@ -70,14 +69,14 @@ if opts[:action]
     case opts[:action]
     when 'pack'   then :all_text_to_bin
     when 'unpack' then :all_bin_to_text
-    else Trollop.die("Unknown action: #{opts[:action]}")
+    else Optimist.die("Unknown action: #{opts[:action]}")
     end
 else
   if opts[:pack] || opts[:unpack]
     action = :all_text_to_bin if opts[:pack]
     action = :all_bin_to_text if opts[:unpack]
   else
-    Trollop.die('No action specified! Please use --pack or --unpack')
+    Optimist.die('No action specified! Please use --pack or --unpack')
   end
 end
 
@@ -88,7 +87,7 @@ opts[:project] ||= Dir.pwd
 opts[:project] = File.expand_path(opts[:project])
 
 unless Rvpacker::Util.valid_project?(opts[:project])
-  Trollop.die("#{opts[:project]} is not a valid RPG Maker project")
+  Optimist.die("#{opts[:project]} is not a valid RPG Maker project")
 end
 
 # We should only have the `:project_type` key if it has been given by the user.
@@ -103,10 +102,10 @@ end
 
 unless [:xp, :vx, :ace].any? { |type| opts[:project_type] == type }
   if opts[:project_type]
-    Trollop.die("#{opts[:project_type]} is not a valid RPG Maker project type")
+    Optimist.die("#{opts[:project_type]} is not a valid RPG Maker project type")
   else
     # NOTE: This is unlikely to happen, but absolutely possible.
-    Trollop.die('Could not determine a valid RPG Maker project type')
+    Optimist.die('Could not determine a valid RPG Maker project type')
   end
 end
 
