@@ -226,7 +226,6 @@ module RGSS
 
   def self.process_file(file, src_file, dest_file, dest_ext, loader, dumper, options)
     fbase = File.basename(file, File.extname(file)).downcase
-    return if !options[:database].nil? && (options[:database].downcase != fbase)
     formatador = Formatador.new
     src_time = File.mtime(src_file)
     if !options[:force] && File.exist?(dest_file) && (src_time - 1) < File.mtime(dest_file)
@@ -313,40 +312,29 @@ module RGSS
       dump_save: :dump_save
     }
 
-    if options[:database].nil? || options[:database].downcase == 'scripts'
-      convert_scripts = true
-    else
-      convert_scripts = false
-    end
-    if options[:database].nil? || options[:database].downcase == 'saves'
-      convert_saves = true
-    else
-      convert_saves = false
-    end
-
     case direction
     when :data_bin_to_text
       convert(data, yaml, options)
-      scripts_to_text(dirs, scripts, yaml_scripts, options) if convert_scripts
+      scripts_to_text(dirs, scripts, yaml_scripts, options)
     when :data_text_to_bin
       convert(yaml, data, options)
-      scripts_to_binary(dirs, yaml_scripts, scripts, options) if convert_scripts
+      scripts_to_binary(dirs, yaml_scripts, scripts, options)
     when :save_bin_to_text
-      convert_saves(base, data, yaml, options) if convert_saves
+      convert_saves(base, data, yaml, options)
     when :save_text_to_bin
-      convert_saves(base, yaml, data, options) if convert_saves
+      convert_saves(base, yaml, data, options)
     when :scripts_bin_to_text
-      scripts_to_text(dirs, scripts, yaml_scripts, options) if convert_scripts
+      scripts_to_text(dirs, scripts, yaml_scripts, options)
     when :scripts_text_to_bin
-      scripts_to_binary(dirs, yaml_scripts, scripts, options) if convert_scripts
+      scripts_to_binary(dirs, yaml_scripts, scripts, options)
     when :all_bin_to_text
       convert(data, yaml, options)
-      scripts_to_text(dirs, scripts, yaml_scripts, options) if convert_scripts
-      convert_saves(base, data, yaml, options) if convert_saves
+      scripts_to_text(dirs, scripts, yaml_scripts, options)
+      convert_saves(base, data, yaml, options)
     when :all_text_to_bin
       convert(yaml, data, options)
-      scripts_to_binary(dirs, yaml_scripts, scripts, options) if convert_scripts
-      convert_saves(base, yaml, data, options) if convert_saves
+      scripts_to_binary(dirs, yaml_scripts, scripts, options)
+      convert_saves(base, yaml, data, options)
     else
       fail "Unrecognized direction :#{direction}"
     end

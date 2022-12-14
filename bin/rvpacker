@@ -49,7 +49,6 @@ EOS
   opt :unpack, 'Unpack binary RPG Maker data to YAML'
   opt :project, 'RPG Maker project directory', short: 'd', type: String
   opt :project_type, 'Project type (xp|vx|ace)', short: 't', type: String
-  opt :database, 'Only work on the given database', short: 'D', type: String
   opt :force, 'Update target even when source is older than target'
   opt :verbose, 'Print verbose information while processing', short: 'V'
 end
@@ -115,7 +114,6 @@ $VERBOSE = opts[:verbose]
 
 # Set up the default extra options passed to `RGSS.serialize`.
 extra_opts = {
-  database:    opts[:database],
   force:       opts[:force],
   line_width:  -1,
   table_width: -1
