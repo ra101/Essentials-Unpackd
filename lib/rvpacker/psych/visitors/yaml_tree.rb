@@ -40,7 +40,6 @@ if defined?(Psych::VERSION) && Psych::VERSION == '2.0.0'
   # situation.
   #
   # Added two options:
-  # `:sort` - sort hashes and instance variables for objects
   # `:flow_classes` - array of class types that will automatically emit with
   #   flow style rather than block style
   module Psych
@@ -64,7 +63,7 @@ if defined?(Psych::VERSION) && Psych::VERSION == '2.0.0'
           tag   = object.class == ::Hash ? nil : "!ruby/hash:#{object.class}"
           style = Nodes::Mapping::BLOCK
           register(object, @emitter.start_mapping(nil, tag, !tag, style))
-          (@options[:sort] ? object.keys.sort! : object.keys).each do |key|
+          object.keys.sort!.each do |key|
             accept(key) && accept(object[key])
           end
           @emitter.end_mapping
@@ -77,7 +76,7 @@ if defined?(Psych::VERSION) && Psych::VERSION == '2.0.0'
           end
 
           style =
-            if @options[:flow_classes] && @options[:flow_classes].include?(object.class)
+            if $FLOW_CLASSES.include?(object.class)
               Nodes::Mapping::FLOW
             else
               Nodes::Mapping::BLOCK
@@ -100,7 +99,7 @@ if defined?(Psych::VERSION) && Psych::VERSION == '2.0.0'
 
         def dump_ivars(target)
           ivars = find_ivars(target)
-          (@options[:sort] ? ivars.sort! : ivars).each do |ivar|
+          ivars.sort!.each do |ivar|
             name = ivar[1..-1]
             @emitter.scalar(name, nil, nil, true, false, Nodes::Scalar::ANY)
             accept(target.instance_variable_get(ivar))

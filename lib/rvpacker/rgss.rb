@@ -19,15 +19,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require 'rvpacker/rgss/essentials'
 require 'rvpacker/basic_coder'
 require 'rvpacker/rpg'
 require 'rvpacker/utils'
 require 'scanf'
 
 class Table
-  MAX_ROW_LENGTH = 20
-
   def initialize(bytes)
     @dim, @x, @y, @z, size, *@data = bytes.unpack('L5S*')
     unless size == @data.length && (@x * @y * @z == size)
@@ -46,11 +43,6 @@ class Table
     if @x * @y * @z > 0
       stride = @x < 2 ? (@y < 2 ? @z : @y) : @x
       rows = @data.each_slice(stride).to_a
-      if MAX_ROW_LENGTH != -1 && stride > MAX_ROW_LENGTH
-        block_length = (stride + MAX_ROW_LENGTH - 1) / MAX_ROW_LENGTH
-        row_length = (stride + block_length - 1) / block_length
-        rows = rows.flat_map { |x| x.each_slice(row_length).to_a }
-      end
       rows.map! { |x| x.map! { |y| '%04x' % y }.join(' ') }
       coder['data'] = rows
     else
@@ -75,6 +67,12 @@ class Table
   def self._load(bytes)
     Table.new(bytes)
   end
+end
+
+class PBAnimations < Array
+end
+
+class PBAnimation < Array
 end
 
 class Color
@@ -145,72 +143,46 @@ module RGSS
     end
   end
 
-  # other classes that don't need definitions
-  [ # RGSS data structures
+  # RGSS/Essentials data structures
+  [
    [:RPG, :Actor], [:RPG, :Animation], [:RPG, :Animation, :Frame],
-   [:RPG, :Animation, :Timing], [:RPG, :Area], [:RPG, :Armor], [:RPG, :AudioFile],
-   [:RPG, :BaseItem], [:RPG, :BaseItem, :Feature], [:RPG, :BGM], [:RPG, :BGS],
-   [:RPG, :Class], [:RPG, :Class, :Learning], [:RPG, :CommonEvent], [:RPG, :Enemy],
-   [:RPG, :Enemy, :Action], [:RPG, :Enemy, :DropItem], [:RPG, :EquipItem],
-   [:RPG, :Event], [:RPG, :Event, :Page], [:RPG, :Event, :Page, :Condition],
-   [:RPG, :Event, :Page, :Graphic], [:RPG, :Item], [:RPG, :Map],
-   [:RPG, :Map, :Encounter], [:RPG, :MapInfo], [:RPG, :ME], [:RPG, :MoveCommand],
+   [:RPG, :Animation, :Timing],  [:RPG, :Armor], [:RPG, :AudioFile],
+   [:RPG, :BGM], [:RPG, :BGS], [:RPG, :Class],[:RPG, :CommonEvent], [:RPG, :Enemy],
+   [:RPG, :Enemy, :Action], [:RPG, :Event], [:RPG, :Event, :Page],
+   [:RPG, :Event, :Page, :Condition], [:RPG, :Event, :Page, :Graphic],
+   [:RPG, :Item], [:RPG, :Map], [:RPG, :MapInfo], [:RPG, :MoveCommand],
    [:RPG, :MoveRoute], [:RPG, :SE], [:RPG, :Skill], [:RPG, :State],
-   [:RPG, :System, :Terms], [:RPG, :System, :TestBattler], [:RPG, :System, :Vehicle],
-   [:RPG, :System, :Words], [:RPG, :Tileset], [:RPG, :Troop], [:RPG, :Troop, :Member],
-   [:RPG, :Troop, :Page], [:RPG, :Troop, :Page, :Condition], [:RPG, :UsableItem],
-   [:RPG, :UsableItem, :Damage], [:RPG, :UsableItem, :Effect], [:RPG, :Weapon],
-   # Script classes serialized in save game files
-   [:Game_ActionResult], [:Game_Actor], [:Game_Actors], [:Game_BaseItem],
-   [:Game_BattleAction], [:Game_CommonEvent], [:Game_Enemy], [:Game_Event],
-   [:Game_Follower], [:Game_Followers], [:Game_Map],
-   [:Game_Message], [:Game_Party], [:Game_Picture], [:Game_Pictures], [:Game_Player],
-   [:Game_System], [:Game_Timer], [:Game_Troop], [:Game_Screen], [:Game_Vehicle],
-   [:Interpreter]
+   [:RPG, :System, :TestBattler], [:RPG, :System, :Words], [:RPG, :Tileset],
+   [:RPG, :Troop], [:RPG, :Troop, :Page], [:RPG, :Troop, :Page, :Condition],
+   [:RPG, :UsableItem], [:RPG, :Weapon], [:PBAnimTiming], [:PBAnimationPlayerX]
   ].each { |x| process(Object, *x) }
 
-  def self.setup_system(options)
-    # Convert variable and switch name arrays to a hash when serialized. If
-    # `:round_trip` isn't set change `version_id` to fixed number.
-    if options[:round_trip]
-      iso = ->(value) { value }
-      reset_method(RPG::System, :reduce_string, iso)
-      reset_method(RPG::System, :map_version, iso)
-      reset_method(Game_System, :map_version, iso)
-    else
-      reset_method(RPG::System, :reduce_string, lambda do |string|
-        return nil if string.nil?
-        stripped = string.strip
-        stripped.empty? ? nil : stripped
-      end)
-      # These magic numbers should be different. If they are the same, the
-      # saved version of the map in save files will be used instead of any
-      # updated version of the map.
-      reset_method(RPG::System, :map_version, ->(_) { 12345678 })
-      reset_method(Game_System, :map_version, ->(_) { 87654321 })
-    end
-  end
+  def self.setup_classes
+    reset_method(RPG::System, :reduce_string, lambda do |string|
+      return nil if string.nil?
+      stripped = string.strip
+      stripped.empty? ? nil : stripped
+    end)
 
-  def self.setup_event_command(options)
-    # Format event commands to flow style for the event codes that aren't move
-    # commands.
-    if options[:round_trip]
-      reset_method(RPG::EventCommand, :clean, ->{})
-    else
-      reset_method(RPG::EventCommand, :clean, -> do
-        @parameters[0].rstrip! if @code == 401
-      end)
-    end
+    # These magic numbers should be different. If they are the same, the
+    # saved version of the map in save files will be used instead of any
+    # updated version of the map.
+    reset_method(RPG::System, :map_version, ->(_) { 12345678 })
+    reset_method(Game_System, :map_version, ->(_) { 87654321 })
+
+    # Format event commands to flow style for the event codes that aren't move commands.
+    reset_method(RPG::EventCommand, :clean, -> do
+      @parameters[0].rstrip! if @code == 401
+    end)
     reset_const(RPG::EventCommand, :MOVE_LIST_CODE, 209)
-  end
 
-  def self.setup_classes(options)
-    setup_system(options)
-    setup_event_command(options)
     Rvpacker::BasicCoder.set_ivars_methods
   end
 
-  FLOW_CLASSES = [Color, Tone, RPG::BGM, RPG::BGS, RPG::MoveCommand, RPG::SE]
+  $FLOW_CLASSES = [
+    Color, Tone, RPG::BGM, RPG::BGS, RPG::MoveCommand, RPG::SE,
+    PBAnimations, PBAnimation, PBAnimTiming
+  ]
 
   SCRIPTS_BASE = 'Scripts'
   XP_DATA_EXT  = '.rxdata'
@@ -222,11 +194,11 @@ module RGSS
   end
 
   def self.get_yaml_directory(base)
-    File.join(base, 'Data/YAML')
+    File.join(get_data_directory(base), 'YAML')
   end
 
   def self.get_script_directory(base)
-    File.join(base, 'Data/Scripts')
+    File.join(get_data_directory(base), 'Scripts')
   end
 
   class ::Game_Switches

@@ -56,11 +56,6 @@ module RGSS
     File.utime(time, time, file)
   end
 
-  def self.dump_save(file, data, time, options)
-    File.open(file, 'wb') { |f| data.each { |chunk| Marshal.dump(chunk, f) } }
-    File.utime(time, time, file)
-  end
-
   def self.dump_raw_file(file, data, time, options)
     File.open(file, 'wb') { |f| f.write(data) }
     File.utime(time, time, file)
@@ -130,14 +125,6 @@ module RGSS
     File.binread(file)
   end
 
-  def self.load_save(file)
-    File.open(file, 'rb') do |f|
-      data = []
-      data << Marshal.load(f) until f.eof?
-      data
-    end
-  end
-
   def self.load(loader, file)
     send(loader, file)
   rescue
@@ -145,7 +132,7 @@ module RGSS
     raise
   end
 
-  def self.scripts_to_text(dirs, src, dest, options)
+  def self.unpack_scripts(dirs, src, dest, options)
     formatador = Formatador.new
     src_file = File.join(dirs[:data], src)
     dest_file = File.join(dirs[:yaml], dest)
@@ -195,7 +182,7 @@ module RGSS
     end
   end
 
-  def self.scripts_to_binary(dirs, src, dest, options)
+  def self.pack_scripts(dirs, src, dest, options)
     formatador = Formatador.new
     src_file   = File.join(dirs[:yaml], src)
     dest_file  = File.join(dirs[:data], dest)
@@ -250,28 +237,10 @@ module RGSS
     end
   end
 
-  def self.convert_saves(base, src, dest, options)
-    save_files = files_with_extension(base, src[:ext])
-    save_files.each do |file|
-      src_file = File.join(base, file)
-      dest_file = File.join(base, change_extension(file, dest[:ext]))
-
-      process_file(file, src_file, dest_file, dest[:ext], src[:load_save],
-                   dest[:dump_save], options)
-    end
-  end
-
-  def self.serialize(direction, directory, options = {})
+  def self.serialize(operation, directory, files, force)
     fail "#{directory} not found" unless File.directory?(directory)
 
-    setup_classes(options)
-    options = options.dup
-    options[:sort] = true
-    options[:flow_classes] = FLOW_CLASSES
-    options[:line_width] ||= 130
-
-    table_width = options[:table_width]
-    RGSS.reset_const(Table, :MAX_ROW_LENGTH, table_width ? table_width : 20)
+    self.setup_classes
 
     base = File.realpath(directory)
 
@@ -291,8 +260,6 @@ module RGSS
       ext:       YAML_EXT,
       load_file: :load_yaml_file,
       dump_file: :dump_yaml_file,
-      load_save: :load_yaml_file,
-      dump_save: :dump_yaml_file
     }
 
     scripts = SCRIPTS_BASE + XP_DATA_EXT
@@ -302,35 +269,19 @@ module RGSS
       ext:       XP_DATA_EXT,
       load_file: :load_data_file,
       dump_file: :dump_data_file,
-      load_save: :load_save,
-      dump_save: :dump_save
     }
 
-    case direction
-    when :data_bin_to_text
+    case operation
+    when :d
+      puts "d"
+    when :extract
       convert(data, yaml, options)
-      scripts_to_text(dirs, scripts, yaml_scripts, options)
-    when :data_text_to_bin
+      unpack_scripts(dirs, scripts, yaml_scripts, options)
+    when :combine
       convert(yaml, data, options)
-      scripts_to_binary(dirs, yaml_scripts, scripts, options)
-    when :save_bin_to_text
-      convert_saves(base, data, yaml, options)
-    when :save_text_to_bin
-      convert_saves(base, yaml, data, options)
-    when :scripts_bin_to_text
-      scripts_to_text(dirs, scripts, yaml_scripts, options)
-    when :scripts_text_to_bin
-      scripts_to_binary(dirs, yaml_scripts, scripts, options)
-    when :all_bin_to_text
-      convert(data, yaml, options)
-      scripts_to_text(dirs, scripts, yaml_scripts, options)
-      convert_saves(base, data, yaml, options)
-    when :all_text_to_bin
-      convert(yaml, data, options)
-      scripts_to_binary(dirs, yaml_scripts, scripts, options)
-      convert_saves(base, yaml, data, options)
+      pack_scripts(dirs, yaml_scripts, scripts, options)
     else
-      fail "Unrecognized direction :#{direction}"
+      fail "Unrecognized Operation :#{operation}"
     end
   end
 end

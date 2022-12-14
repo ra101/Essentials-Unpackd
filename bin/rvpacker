@@ -45,56 +45,39 @@ EOS
   # NOTE: The `--action` option is deprecated and will likely be removed in the
   #   future.
   opt :action, 'Action to perform on the project (pack|unpack)', type: String
-  opt :pack, 'Pack YAML into binary RPG Maker data'
-  opt :unpack, 'Unpack binary RPG Maker data to YAML'
-  opt :project, 'Absolute Path to Essentials Game Folder, Else current Folder will be Selected', short: 'd', type: String
-  opt :force, 'Update target even when source is older than target'
+  opt :combine, 'Pack YAML into binary RPG Maker data', short: 'c'
+  opt :extract, 'Unpack binary RPG Maker data to YAML', short: 'e'
+  opt :files, 'File Names for .rxfiles to operate on', short: 'f', type: :strings
+  opt :force, 'Used with `--combine` to will Pack Data Forcefully'
   opt :verbose, 'Print verbose information while processing', short: 'V'
+  opt :d, 'Not to be used by user'
 end
 
-# Fail fast if any of the `pack`, `unpack`, or `action` options are combined.
+project = File.expand_path(Dir.pwd)
+action = :combine if opts[:combine]
+action = :extract if opts[:extract]
+action = :d if opts[:d]
+
+if action.nil?
+  Optimist.die('Error: Either `--combine` or `--extract` must be Specified!')
+end
+
 if Rvpacker::Utils.combined_action?(opts)
-  Optimist.die('--pack, --unpack, and --action cannot be combined')
+  Optimist.die('Error: Use Either `--combine` or `--extract`, not Both!')
 end
 
-# Attempt to parse which action to perform (packing YAML to binary data or
-# unpacking binary data to YAML). Warn if the `action` option was used, as it
-# is likely to be removed in the future and fail fast if the action is Unknown
-# or missing entirely.
-if opts[:action]
-  warn 'Warning: --action is deprecated; please use either --pack or --unpack.'
-  action =
-    case opts[:action]
-    when 'pack'   then :all_text_to_bin
-    when 'unpack' then :all_bin_to_text
-    else Optimist.die("Unknown action: #{opts[:action]}")
-    end
-else
-  if opts[:pack] || opts[:unpack]
-    action = :all_text_to_bin if opts[:pack]
-    action = :all_bin_to_text if opts[:unpack]
-  else
-    Optimist.die('No action specified! Please use --pack or --unpack')
-  end
+if opts[:files].nil?
+  Optimist.die('Error: `--files` must be Specified! Use `-f *` for all files.')
 end
 
-# Attempt to use the current working directory as the project directory if the
-# project directory was not given by the user when running `rvpacker`. Fail
-# fast if the directory does not appear to contain a valid RPG Maker project.
-opts[:project] ||= Dir.pwd
-opts[:project] = File.expand_path(opts[:project])
+if opts[:files].length > 1 and opts[:d]
+  exec("echo '# Error'")
+end
 
-unless Rvpacker::Utils.valid_project?(opts[:project])
-  Optimist.die("#{opts[:project]} is not a valid RPG Maker project")
+project = "/mnt/d/code.RA/pokemon-essentials"
+if Rvpacker::Utils.invalid_project?(project)
+  Optimist.die("#{project} is not a valid RPG Maker project")
 end
 
 $VERBOSE = opts[:verbose]
-
-# Set up the default extra options passed to `RGSS.serialize`.
-extra_opts = {
-  force:       opts[:force],
-  line_width:  -1,
-  table_width: -1
-}
-
-RGSS.serialize(action, opts[:project], extra_opts)
+RGSS.serialize(action, project, opts[:files], opts[:force])

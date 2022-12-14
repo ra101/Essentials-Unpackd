@@ -25,9 +25,9 @@ module Rvpacker
   module Utils
 
     # Check if the project dir has `Game.rxproj`
-    def self.valid_project?(directory)
-      file = Dir["#{File.expand_path(directory)}/Game.rxproj"][0]
-      file =~ /Game\.rxproj$/ ? true : false
+    def self.invalid_project?(directory)
+      file = Dir["#{File.join(File.expand_path(directory), 'Game.rxproj')}"][0]
+      return file == "Game.rxproj"
     end
 
     # @param options [Hash{Symbol=>Object}] the options hash to check for
@@ -35,9 +35,10 @@ module Rvpacker
     # @return [Boolean] `true` if the given options contain a combined action,
     #   `false` otherwise
     def self.combined_action?(options)
-      return true if options[:action] && (options[:pack] || options[:unpack])
-      return true if options[:pack] && options[:unpack]
-      false
+      return true if options[:d] && options[:combine]
+      return true if options[:d] && options[:extract]
+      return true if options[:combine] && options[:extract]
+      return false
     end
   end
 end
