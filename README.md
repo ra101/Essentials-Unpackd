@@ -14,8 +14,8 @@ The RPG and RGSS libraries were originally taken from [SiCrane's YAML importer/e
 
 
 ```sh
-$ git clone https://github.com/Solistra/unpackd.git
-$ cd unpackd
+$ git clone https://github.com/ra101/Essentials-Unpackd.git
+$ cd Essentials-Unpackd
 $ gem install bundler
 $ bundle install
 ```
