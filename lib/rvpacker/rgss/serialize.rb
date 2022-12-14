@@ -262,27 +262,6 @@ module RGSS
     end
   end
 
-  # @note Valid directions for data serialization are as follows:
-  #   - `:data_bin_to_text`, `:data_text_to_bin`
-  #   - `:save_bin_to_text`, `:save_text_to_bin`
-  #   - `:scripts_bin_to_text`, `:scripts_text_to_bin`
-  #   - `:all_text_to_bin`, `:all_bin_to_text`
-  #
-  # @note Valid extra options are as follows:
-  #   - `:force` - ignores file dates when converting (default `false`)
-  #   - `:round_trip` - create YAML data that matches original marshalled data;
-  #     skips data cleanup operations (default `false`)
-  #   - `:line_width` - line width for YAML files; `-1` for no line width limit
-  #      (default `130`)
-  #   - `:table_width` - maximum number of entries per row for `Table` data;
-  #     `-1` for no `Table` row limit (default `20`)
-  #
-  # @param version [:xp, :vx, :ace] the RPG Maker version to serialize as
-  # @param direction [Symbol] the direction to serialize data in; see the notes
-  #   for this method
-  # @param directory [String] the root directory of an RPG Maker project
-  # @param options [Hash{Symbol=>Object}] extra options; see the notes for this
-  #   method
   def self.serialize(version, direction, directory, options = {})
     fail "#{directory} not found" unless File.directory?(directory)
 

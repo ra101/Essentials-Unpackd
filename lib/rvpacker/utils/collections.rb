@@ -1,5 +1,5 @@
 module Rvpacker
-  module Util
+  module Utils
     module Collections
       # Converts the given `array` into a `Hash`.
       #

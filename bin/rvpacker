@@ -55,7 +55,7 @@ EOS
 end
 
 # Fail fast if any of the `pack`, `unpack`, or `action` options are combined.
-if Rvpacker::Util.combined_action?(opts)
+if Rvpacker::Utils.combined_action?(opts)
   Optimist.die('--pack, --unpack, and --action cannot be combined')
 end
 
@@ -86,9 +86,10 @@ end
 opts[:project] ||= Dir.pwd
 opts[:project] = File.expand_path(opts[:project])
 
-unless Rvpacker::Util.valid_project?(opts[:project])
+unless Rvpacker::Utils.valid_project?(opts[:project])
   Optimist.die("#{opts[:project]} is not a valid RPG Maker project")
 end
+Optimist.die("#{opts[:project]} is a valid RPG Maker project")
 
 # We should only have the `:project_type` key if it has been given by the user.
 # If we have it, coerce it into a symbol for use in `RGSS.serialize`;
@@ -97,7 +98,7 @@ end
 if opts[:project_type]
   opts[:project_type] = opts[:project_type].to_sym
 else
-  opts[:project_type] = Rvpacker::Util.project_type_for(opts[:project])
+  opts[:project_type] = Rvpacker::Utils.project_type_for(opts[:project])
 end
 
 unless [:xp, :vx, :ace].any? { |type| opts[:project_type] == type }

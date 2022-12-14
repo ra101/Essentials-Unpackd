@@ -18,11 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require 'rvpacker/util/collections'
+require 'rvpacker/utils/collections'
 
 module Rvpacker
   # Defines various utility methods for use by `rvpacker`.
-  module Util
+  module Utils
     # @param directory [String] the directory to obtain the project type for
     # @return [:xp, :vx, :ace, nil] the project type of the given directory if
     #   it could be determined, `nil` otherwise

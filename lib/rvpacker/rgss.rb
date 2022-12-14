@@ -21,7 +21,7 @@
 
 require 'rvpacker/basic_coder'
 require 'rvpacker/rpg'
-require 'rvpacker/util'
+require 'rvpacker/utils'
 require 'scanf'
 
 class Table
@@ -236,15 +236,15 @@ module RGSS
   end
 
   def self.get_yaml_directory(base)
-    File.join(base, 'YAML')
+    File.join(base, 'Data/YAML')
   end
 
   def self.get_script_directory(base)
-    File.join(base, 'Scripts')
+    File.join(base, 'Data/Scripts')
   end
 
   class ::Game_Switches
-    include Rvpacker::BasicCoder, Rvpacker::Util::Collections
+    include Rvpacker::BasicCoder, Rvpacker::Utils::Collections
 
     def encode(_, value)
       array_to_hash(value)
@@ -256,7 +256,7 @@ module RGSS
   end
 
   class ::Game_Variables
-    include Rvpacker::BasicCoder, Rvpacker::Util::Collections
+    include Rvpacker::BasicCoder, Rvpacker::Utils::Collections
 
     def encode(_, value)
       array_to_hash(value)
