@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+require 'rvpacker/rgss/essentials'
 require 'rvpacker/basic_coder'
 require 'rvpacker/rpg'
 require 'rvpacker/utils'
