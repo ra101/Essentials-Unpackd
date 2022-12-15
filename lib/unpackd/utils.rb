@@ -24,6 +24,24 @@ module Unpackd
   # Defines various utility methods for use by `unpackd`.
   module Utils
 
+    def self.get_rxfile_paths(filenames, dir)
+      file_paths, data_dir =  [], File.join(File.realpath(dir), 'Data')
+      filenames.each do |fname|
+        fname = File.basename(fname).delete_prefix(".rxdata")
+        file_paths += Dir[File.join(data_dir, "#{fname}.rxdata")]
+      end
+      return file_paths.uniq
+    end
+
+    def self.get_ymlfile_paths(filenames, dir)
+      file_paths, data_dir =  [], File.join(File.join(File.realpath(dir), 'Data'), 'YAML')
+      filenames.each do |fname|
+        fname = File.basename(fname).delete_prefix(".yaml")
+        file_paths += Dir[File.join(data_dir, "#{fname}.yaml")]
+      end
+      return file_paths.uniq
+    end
+
     # Check if the project dir has `Game.rxproj`
     def self.invalid_project?(directory)
       file = Dir["#{File.join(File.expand_path(directory), 'Game.rxproj')}"][0]
