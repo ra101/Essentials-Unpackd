@@ -27,8 +27,8 @@ module Unpackd
     def self.get_rxfile_paths(filenames, dir)
       file_paths, data_dir =  [], File.join(File.realpath(dir), 'Data')
       filenames.each do |fname|
-        fname = File.basename(fname).delete_prefix(".rxdata")
-        file_paths += Dir[File.join(data_dir, "#{fname}.rxdata")]
+        fname = File.basename(fname, ".*") << '.rxdata'
+        file_paths += Dir[File.join(data_dir, fname)]
       end
       return file_paths.uniq
     end

@@ -50,7 +50,7 @@ EOS
   opt :files, 'File Names for .rxfiles to operate on', short: 'f', type: :strings, default: ["*"]
   opt :force, 'Used with `--combine` to will Pack Data Forcefully'
   opt :verbose, 'Print verbose information while processing', short: 'V'
-  opt :d, 'Not to be used by user'
+  opt :d, 'Do Not Use! Encode Single YAML file'
 end
 
 project = File.expand_path(Dir.pwd)
@@ -80,4 +80,4 @@ else
 end
 
 $VERBOSE = opts[:verbose] if not opts[:d]
-RGSS.serialize(action, project, opts[:files], opts[:force])
+RGSS.serialize(action, project, files, opts[:force])

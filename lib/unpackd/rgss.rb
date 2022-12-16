@@ -189,16 +189,20 @@ module RGSS
   YAML_EXT     = '.yaml'
   RUBY_EXT     = '.rb'
 
-  def self.get_data_directory(base)
+  def self.get_data_dir(base)
     File.join(base, 'Data')
   end
 
-  def self.get_yaml_directory(base)
-    File.join(get_data_directory(base), 'YAML')
+  def self.get_yaml_dir(base)
+    File.join(get_data_dir(base), 'YAML')
   end
 
-  def self.get_script_directory(base)
-    File.join(get_data_directory(base), 'Scripts')
+  def self.get_script_dir(base)
+    File.join(get_data_dir(base), 'Scripts')
+  end
+
+  def self.get_backup_dir(base)
+    File.join(get_data_dir(base), 'Backup')
   end
 
   class ::Game_Switches
