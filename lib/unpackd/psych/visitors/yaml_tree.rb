@@ -108,6 +108,6 @@ if defined?(Psych::VERSION) && Psych::VERSION == '2.0.0'
       end
     end
   end
-elsif $VERBOSE
+else
   warn 'Warning: Psych 2.0.0 not detected.'
 end

@@ -38,6 +38,10 @@ module RGSS
     File.basename(file, '.*') << new_ext
   end
 
+  def self.echo(color="white", line)
+    $formatador.display_line("[#{color}]#{line}[/]") if $VERBOSE
+  end
+
   def self.sanitize_filename(filename)
     filename.gsub(/[^0-9A-Za-z]+/, '_')
   end
@@ -95,18 +99,18 @@ module RGSS
       next if id.nil?
 
       if seen.key?(id)
-        $formatador.display_line("[red]#{file}: Duplicate ID #{id}[/]")
+        echo("red", "#{file}: Duplicate ID #{id}")
         formatador.indent do
           formatador.indent do
             elem.pretty_inspect.split(/\n/).each do |line|
-              $formatador.display_line("[red]#{line}[/]")
+              echo("red", "#{line}")
             end
           end
           $formatador.display_line
-          $formatador.display_line("[red]Last seen at:\n[/]")
+          echo("red", "Last seen at:\n")
           formatador.indent do
             elem.pretty_inspect.split(/\n/).each do |line|
-              $formatador.display_line("[red]#{line}[/]")
+              echo("red", "#{line}")
             end
           end
         end
@@ -190,9 +194,9 @@ module RGSS
 
     src_time = File.mtime(src_file)
     if check_time && (src_time - 1) < oldest_time
-      $formatador.display_line('[yellow]Skipping scripts to text[/]') if $VERBOSE
+      echo("yellow", "Skipping scripts to text")
     else
-      $formatador.display_line('[green]Converting scripts to text[/]') if $VERBOSE
+      echo("green", "Converting scripts to text")
       dump(:dump_yaml_file, dest_file, script_index)
       script_code.each do |file, code|
         dump(:dump_raw_file, file, code)
@@ -222,9 +226,9 @@ module RGSS
       script_entries << [magic_number, script_name, deflate(code)]
     end
     if check_time && (newest_time - 1) < File.mtime(dest_file)
-      $formatador.display_line('[yellow]Skipping scripts to binary[/]') if $VERBOSE
+      echo("yellow", "Skipping scripts to binary")
     else
-      $formatador.display_line('[green]Converting scripts to binary[/]') if $VERBOSE
+      echo("green", "Converting scripts to binary")
       dump(:dump_data_file, dest_file, script_entries, newest_time, options)
     end
   end
@@ -234,9 +238,9 @@ module RGSS
     formatador = Formatador.new
     src_time = File.mtime(src_file)
     if !options[:force] && File.exist?(dest_file) && (src_time - 1) < File.mtime(dest_file)
-      $formatador.display_line("[yellow]Skipping #{file}[/]") if $VERBOSE
+      echo("yellow", "Skipping #{file}")
     else
-      $formatador.display_line("[green]Converting #{file} to #{dest_ext}[/]") if $VERBOSE
+      echo("green", "Converting #{file} to #{dest_ext}")
       data = load(loader, src_file)
       dump(dumper, dest_file, data)
     end
@@ -258,7 +262,7 @@ module RGSS
   def self.extract_scripts(ifile, fname, dirs)
     scripts = load(:load_data_file, ifile)
     if scripts.length < 10
-      $formatador.display_line("[red]#{fname}.rxdata Already Extracting![/]")
+      echo("red", "#{fname}.rxdata Already Extracted!")
       return
     end
 
@@ -306,14 +310,6 @@ module RGSS
       dump(:dump_raw_file, ofile, script)
       file_id += 1
     end
-
-    # Backup Scripts.rxdata to ScriptsBackup.rxdata
-    # File.open("Data/ScriptsBackup.rxdata", "wb") do |f|
-    #   Marshal.dump(scripts, f)
-    # end
-    # Replace Scripts.rxdata with ScriptsLoader.rxdata
-    setup_script_loader(ifile)
-
   end
 
   def self.setup_script_loader(ifile)
@@ -329,16 +325,16 @@ module RGSS
     data = load(:load_data_file, ifile)
 
     # if data[3].delete("\r").start_with?("# Loader")
-    #   $formatador.display_line("[red]#{fname}.rxdata Already Extracting![/]") if $VERBOSE
+    #   echo("red", "#{fname}.rxdata Already Extracting!")
     #   return
 
-    $formatador.display_line("[green]Extracting #{fname}.rxdata[/]") if $VERBOSE
+    echo("green", "Extracting #{fname}.rxdata")
     ofile = File.join(dirs[:yaml], fname << ".yaml")
     dump(:dump_yaml_file, ofile, data)
   end
 
   def self.make_backup(files, backup_dir)
-    $formatador.display_line("[yellow]Making Backup for #{files}[/]") if $VERBOSE
+    echo("yellow", "Making Backup for #{files.map {|f| File.basename(f, ".*")}}")
     files.each do |file|
       bfile = File.join(backup_dir, File.basename("#{file}.backup"))
       dump(:dump_data_file, bfile, load(:load_data_file, file))
@@ -346,7 +342,7 @@ module RGSS
   end
 
   def self.revert_backup(files, backup_dir)
-    $formatador.display_line("[yellow]Reverting Backup for #{files}[/]") if $VERBOSE
+    echo("yellow", "Reverting Backup for #{files.map {|f| File.basename(f, ".*")}}")
     files.each do |file|
       bfile = File.join(backup_dir, File.basename("#{file}.backup"))
       dump(:dump_data_file, file, load(:load_data_file, bfile))
@@ -360,13 +356,15 @@ module RGSS
       files.each do |file|
         fname = File.basename(file, ".*")
         if fname.downcase == "scripts"
-          extract_scriptsa(file, fname,  dirs)
+          extract_scripts(file, fname,  dirs)
+          setup_script_loader(file)
         else
           extract_yaml(file, fname, dirs)
         end
       end
-    rescue
+    rescue => e
       revert_backup(files, dirs[:backup])
+      echo("red", "#{e}")
     end
   end
 
