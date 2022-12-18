@@ -80,5 +80,45 @@ module Unpackd
         [].tap { |array| hash.each { |index, value| array[index] = value } }
       end
     end
+
+    module BasicCoder
+      INCLUDED_CLASSES = []
+
+      def self.included(other)
+        INCLUDED_CLASSES << other
+      end
+
+      def encode_with(coder)
+        ivars.each do |ivar|
+          name  = ivar[1..-1]
+          value = instance_variable_get(ivar)
+          coder[name] = encode(name, value)
+        end
+      end
+
+      def encode(_, value)
+        value
+      end
+
+      def init_with(coder)
+        coder.map.each do |ivar, value|
+          instance_variable_set(:"@#{ivar}", decode(ivar, value))
+        end
+      end
+
+      def decode(_, value)
+        value
+      end
+
+      def ivars
+        instance_variables
+      end
+
+      def self.set_ivars_methods()
+        INCLUDED_CLASSES.each do |c|
+          RGSS.reset_method(c, :ivars, -> { instance_variables.sort })
+        end
+      end
+    end
   end
 end

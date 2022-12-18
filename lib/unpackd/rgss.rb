@@ -18,9 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-require 'unpackd/basic_coder'
-require 'unpackd/rpg'
+require 'unpackd/psych'
 require 'unpackd/utils'
 require 'scanf'
 
@@ -117,6 +115,52 @@ class Rect
   end
 end
 
+module RPG
+  class System
+    include Unpackd::Utils::BasicCoder
+    HASHED_VARS = %w(variables switches)
+  end
+
+  def encode(name, value)
+    if HASHED_VARS.include?(name)
+      array_to_hash(value) { |val| reduce_string(val) }
+    elsif name == 'version_id'
+      map_version(value)
+    else
+      value
+    end
+  end
+
+  def decode(name, value)
+    HASHED_VARS.include?(name) ? hash_to_array(value) : value
+  end
+
+  class EventCommand
+    def encode_with(coder)
+      unless instance_variables.length == 3
+        raise 'Unexpected number of instance variables'
+      end
+      clean
+
+      coder.style =
+        case @code
+        when MOVE_LIST_CODE then Psych::Nodes::Mapping::BLOCK
+        else Psych::Nodes::Mapping::FLOW
+        end
+      coder['c'] = @code
+      coder['i'] = @indent
+      coder['p'] = @parameters
+    end
+
+    def init_with(coder)
+      @code       = coder['c']
+      @indent     = coder['i']
+      @parameters = coder['p']
+    end
+  end
+end
+
+
 module RGSS
   def self.remove_defined_method(scope, name)
     if scope.instance_methods(false).include?(name)
@@ -176,7 +220,7 @@ module RGSS
     end)
     reset_const(RPG::EventCommand, :MOVE_LIST_CODE, 209)
 
-    Unpackd::BasicCoder.set_ivars_methods
+    Unpackd::Utils::BasicCoder.set_ivars_methods
   end
 
   $FLOW_CLASSES = [
@@ -206,7 +250,7 @@ module RGSS
   end
 
   class ::Game_Switches
-    include Unpackd::BasicCoder, Unpackd::Utils::Collections
+    include Unpackd::Utils::BasicCoder, Unpackd::Utils::Collections
 
     def encode(_, value)
       array_to_hash(value)
@@ -218,7 +262,7 @@ module RGSS
   end
 
   class ::Game_Variables
-    include Unpackd::BasicCoder, Unpackd::Utils::Collections
+    include Unpackd::Utils::BasicCoder, Unpackd::Utils::Collections
 
     def encode(_, value)
       array_to_hash(value)
@@ -230,7 +274,7 @@ module RGSS
   end
 
   class ::Game_SelfSwitches
-    include Unpackd::BasicCoder
+    include Unpackd::Utils::BasicCoder
 
     def encode(_, value)
       Hash[value.map { |(key, val)| next [sprintf('%03d %03d %s', key, val)] }]
@@ -242,7 +286,7 @@ module RGSS
   end
 
   class ::Game_System
-    include Unpackd::BasicCoder
+    include Unpackd::Utils::BasicCoder
 
     def encode(name, value)
       name == 'version_id' ? map_version(value) : value

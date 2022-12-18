@@ -56,7 +56,7 @@ EOS
 end
 
 project = File.expand_path(Dir.pwd)
-project = "/mnt/d/code.RA/pokemon-essentials"
+project = "D:/code.RA/pokemon-essentials"
 action = :combine if opts[:combine]
 action = :extract if opts[:extract]
 action = :d if opts[:d]
