@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
     "lib/unpackd/basic_coder.rb", "lib/unpackd/psych.rb",
     "lib/unpackd/rgss.rb", "lib/unpackd/rgss/loader_code.rb",
     "lib/unpackd/rgss/serialize.rb", "lib/unpackd/rpg.rb", "lib/unpackd/utils.rb",
-    "lib/unpackd/utils/collections.rb", "unpackd.gemspec", "Gemfile"
+    "unpackd.gemspec", "Gemfile"
   ]
   spec.executables   = 'unpackd'
   spec.require_paths = ['lib']
