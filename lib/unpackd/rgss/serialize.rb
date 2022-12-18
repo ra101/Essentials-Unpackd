@@ -24,8 +24,8 @@ require 'zlib'
 require 'pp'
 require 'formatador'
 
-require 'unpackd/psych/visitors/yaml_tree'
-require 'unpackd/rgss/loader_code.rb'
+require 'unpackd/psych'
+require 'unpackd/rgss/loader_code'
 
 class Numeric
   def to_digits(num = 3)
