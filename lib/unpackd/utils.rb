@@ -51,10 +51,12 @@ module Unpackd
     # @return [Boolean] `true` if the given options contain a combined action,
     #   `false` otherwise
     def self.combined_action?(options)
-      return true if options[:d] && options[:combine]
-      return true if options[:d] && options[:extract]
-      return true if options[:combine] && options[:extract]
-      return false
+      action_count = 0
+      action_count += 1 if options[:d]
+      action_count += 1 if options[:extract]
+      action_count += 1 if options[:combine]
+      action_count += 1 if options[:revert]
+      return action_count > 1
     end
 
     module Collections

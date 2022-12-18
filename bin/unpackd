@@ -49,6 +49,7 @@ EOS
   opt :action, 'Action to perform on the project (pack|unpack)', type: String
   opt :combine, 'Pack YAML into binary RPG Maker data', short: 'c'
   opt :extract, 'Unpack binary RPG Maker data to YAML', short: 'e'
+  opt :revert, 'Revert .rxdata from Backup Folder', short: 'r'
   opt :files, 'File Names for .rxfiles to operate on', short: 'f', type: :strings, default: ["*"]
   opt :force, 'Used with `--combine` to will Pack Data Forcefully'
   opt :silent, 'Do not output any information while processing', short: 's'
@@ -62,11 +63,11 @@ action = :extract if opts[:extract]
 action = :d if opts[:d]
 
 if action.nil?
-  Optimist.die('Error: Either `--combine` or `--extract` must be Specified!')
+  Optimist.die('Either `--combine`, `--extract` or `--revert` must be Specified!')
 end
 
 if Unpackd::Utils.combined_action?(opts)
-  Optimist.die('Error: Use Either `--combine` or `--extract`, not Both!')
+  Optimist.die('Use Either `--combine`, `--extract` or `--revert`, Only One!')
 end
 
 if Unpackd::Utils.invalid_project?(project)
@@ -78,7 +79,11 @@ if opts[:d]
   exec("echo '# Error'") if files.length != 1
 else
   files = Unpackd::Utils.get_rxfile_paths(opts[:files], project)
-  Optimist.die('Error: Zero files Selected!') if files.empty?
+  Optimist.die('Zero files Selected!') if files.empty?
+end
+
+if opts[:force] and not opts[:combine]
+  Optimist.die('`--force` only works for `--combine`!')
 end
 
 $SILENT = opts[:silent] if not opts[:d]
