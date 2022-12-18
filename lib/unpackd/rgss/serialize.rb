@@ -361,7 +361,7 @@ module RGSS
     files.each do |file|
       data, fname = load(:load_data_file, file), File.basename(file, ".*")
       if fname.downcase == "scripts" and data.length < 10
-        next echo("yellow", "#{fname}.rxdata Backup Halted!")
+        next echo("yellow", "Scripts.rxdata is Loader, Backup Canceled!")
       end
       bfile = File.join(backup_dir, File.basename("#{file}.backup"))
       dump(:dump_data_file, bfile, data)

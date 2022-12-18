@@ -22,9 +22,21 @@ module Unpackd
   # Defines various utility methods for use by `unpackd`.
   module Utils
 
+    # Get All rxfiles, Except for Scripts.rxdata
     def self.get_rxfile_paths(filenames, dir)
       file_paths, data_dir =  [], File.join(File.realpath(dir), 'Data')
       filenames.each do |fname|
+        next if fname.downcase == "scripts"
+        fname = File.basename(fname, ".*") << '.rxdata'
+        file_paths += Dir[File.join(data_dir, fname)]
+      end
+      return file_paths.uniq
+    end
+
+    def self.get_scripts_paths(filenames, dir)
+      file_paths, data_dir =  [], File.join(File.realpath(dir), 'Data')
+      filenames.each do |fname|
+        next unless fname.downcase == "scripts"
         fname = File.basename(fname, ".*") << '.rxdata'
         file_paths += Dir[File.join(data_dir, fname)]
       end
@@ -34,8 +46,17 @@ module Unpackd
     def self.get_ymlfile_paths(filenames, dir)
       file_paths, data_dir =  [], File.join(File.join(File.realpath(dir), 'Data'), 'YAML')
       filenames.each do |fname|
-        fname = File.basename(fname).delete_prefix(".yaml")
-        file_paths += Dir[File.join(data_dir, "#{fname}.yaml")]
+        fname = File.basename(fname, ".*") << '.yaml'
+        file_paths += Dir[File.join(data_dir, fname)]
+      end
+      return file_paths.uniq
+    end
+
+    def self.get_backup_paths(filenames, dir)
+      file_paths, data_dir =  [], File.join(File.join(File.realpath(dir), 'Data'), 'Backup')
+      filenames.each do |fname|
+        fname = File.basename(fname, ".*") << '.rxdata.backup'
+        file_paths += Dir[File.join(data_dir, fname)]
       end
       return file_paths.uniq
     end

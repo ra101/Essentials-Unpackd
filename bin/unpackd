@@ -70,21 +70,24 @@ if Unpackd::Utils.combined_action?(opts)
   Optimist.die('Use Either `--combine`, `--extract` or `--revert`, Only One!')
 end
 
-if Unpackd::Utils.invalid_project?(project)
-  Optimist.die("#{project} is not a valid RPG Maker project")
-end
-
-# if opts[:yml2rb]
-#   files = Unpackd::Utils.get_ymlfile_paths(opts[:files], project)
-#   exec("echo '# Error'") if files.length != 1
-# else
-#   files = Unpackd::Utils.get_rxfile_paths(opts[:files], project)
-#   Optimist.die('Zero files Selected!') if files.empty?
-# end
-
 if opts[:force] and not opts[:combine]
   Optimist.die('`--force` only works for `--combine`!')
 end
 
-# $SILENT = opts[:silent] if not opts[:yml2rb]
+if Unpackd::Utils.invalid_project?(project)
+  Optimist.die("#{project} is not a valid RPG Maker project")
+end
+
+if opts[:extract]
+  files += Unpackd::Utils.get_rxfile_paths(opts[:files], project)
+
+if opts[:combine]
+  files += Unpackd::Utils.get_ymlfile_paths(opts[:files], project)
+
+if opts[:revert]
+  files = Unpackd::Utils.get_backup_paths(opts[:files], project)
+else
+  files = Unpackd::Utils.get_scripts_paths(opts[:files], project)
+
+$SILENT = opts[:silent] # if not opts[:yml2rb]
 RGSS.serialize(action, project, files, opts[:force])
