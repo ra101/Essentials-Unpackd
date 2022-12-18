@@ -20,12 +20,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+lib = File.join(File.expand_path('..', File.expand_path('..', __FILE__)), 'lib')
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 require 'optimist'
 require 'unpackd'
 
 version_string = <<-EOS.chomp!
 unpackd #{Unpackd::VERSION}
-Copyright (c) 2013 Howard Jeng, 2014-2015 Andrew Kesterson, Rachel Wall
 EOS
 
 opts = Optimist.options do

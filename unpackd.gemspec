@@ -1,5 +1,5 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.join(File.expand_path('..', __FILE__), 'lib')
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'unpackd/version'
 
@@ -16,13 +16,23 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/ra101/unpackd"
   spec.license       = 'MIT'
 
-  spec.files         = `git ls-files -z`.split("\x0")
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.executables   = spec.files.grep(%r{^bin/}) { 'unpackd' }
+  spec.files         = [
+    "spec/spec_helper.rb", "bin/unpackd", "lib/unpackd/version.rb",
+    "lib/unpackd/basic_coder.rb", "lib/unpackd/psych.rb",
+    "lib/unpackd/rgss.rb", "lib/unpackd/rgss/loader_code.rb",
+    "lib/unpackd/rgss/serialize.rb", "lib/unpackd/rpg.rb", "lib/unpackd/utils.rb",
+    "lib/unpackd/utils/collections.rb", "unpackd.gemspec", "Gemfile"
+  ]
+  spec.executables   = 'unpackd'
   spec.require_paths = ['lib']
+
+  spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'ocra'
 
   spec.add_dependency "optimist"
   spec.add_dependency "scanf"
   spec.add_dependency "psych", "2.0.0"
   spec.add_dependency "formatador"
+  spec.add_dependency "zlib"
+  spec.add_dependency "fileutils"
 end
