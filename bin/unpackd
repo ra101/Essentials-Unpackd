@@ -53,14 +53,14 @@ EOS
   opt :files, 'File Names for .rxfiles to operate on', short: 'f', type: :strings, default: ["*"]
   opt :force, 'Used with `--combine` to will Pack Data Forcefully'
   opt :silent, 'Do not output any information while processing', short: 's'
-  opt :d, 'Do Not Use! Encode Single YAML file'
+  # opt :yml2rb, 'Encode Single YAML file'
 end
 
 project = File.expand_path(Dir.pwd)
 project = "D:/code.RA/pokemon-essentials"
 action = :combine if opts[:combine]
 action = :extract if opts[:extract]
-action = :d if opts[:d]
+# action = :yml2rb if opts[:yml2rb]
 
 if action.nil?
   Optimist.die('Either `--combine`, `--extract` or `--revert` must be Specified!')
@@ -74,17 +74,17 @@ if Unpackd::Utils.invalid_project?(project)
   Optimist.die("#{project} is not a valid RPG Maker project")
 end
 
-if opts[:d]
-  files = Unpackd::Utils.get_ymlfile_paths(opts[:files], project)
-  exec("echo '# Error'") if files.length != 1
-else
-  files = Unpackd::Utils.get_rxfile_paths(opts[:files], project)
-  Optimist.die('Zero files Selected!') if files.empty?
-end
+# if opts[:yml2rb]
+#   files = Unpackd::Utils.get_ymlfile_paths(opts[:files], project)
+#   exec("echo '# Error'") if files.length != 1
+# else
+#   files = Unpackd::Utils.get_rxfile_paths(opts[:files], project)
+#   Optimist.die('Zero files Selected!') if files.empty?
+# end
 
 if opts[:force] and not opts[:combine]
   Optimist.die('`--force` only works for `--combine`!')
 end
 
-$SILENT = opts[:silent] if not opts[:d]
+# $SILENT = opts[:silent] if not opts[:yml2rb]
 RGSS.serialize(action, project, files, opts[:force])

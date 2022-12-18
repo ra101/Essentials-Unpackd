@@ -314,24 +314,46 @@ module RGSS
       dump(:dump_raw_file, ofile, script)
       file_id += 1
     end
+
+    setup_script_loader(ifile)
   end
 
   def self.setup_script_loader(ifile)
+    echo("blue", "Creating Loader for #{File.basename(ifile)}")
     binary = deflate(LoaderCode::get_script_loader)
     dump(:dump_data_file, ifile, [[62054200, "Main", binary]])
+  end
+
+  def self.setup_yaml_loader(fname, ifile)
+    echo("blue", "Creating Loader for #{File.basename(ifile)}")
+    binary = deflate(LoaderCode::get_yaml_loader(fname))
+    dump(:dump_data_file, ifile, binary)
   end
 
 
   def self.extract_yaml(ifile, fname, dirs)
     data = load(:load_data_file, ifile)
 
-    # if data[3].delete("\r").start_with?("# Loader")
-    #   echo("red", "#{fname}.rxdata Already Extracting!")
-    #   return
+    # Loader Check for YAML
+    # begin
+    #   infated_code = inflate(data)
+    # rescue TypeError => e
+    #   nil
+    # else
+    #   if infated_code.class == String
+    #     if infated_code.downcase.start_with?("# loader")
+    #       puts infated_code
+    #       echo("red", "#{fname}.rxdata Already Extracted!")
+    #       return
+    #     end
+    #   end
+    # end
 
     echo("green", "Extracting #{fname}.rxdata")
-    ofile = File.join(dirs[:yaml], fname << ".yaml")
+    ofile = File.join(dirs[:yaml], fname + ".yaml")
     dump(:dump_yaml_file, ofile, data)
+
+    # setup_yaml_loader(fname, ifile)
   end
 
   def self.make_backup(files, backup_dir)
@@ -362,7 +384,6 @@ module RGSS
         fname = File.basename(file, ".*")
         if fname.downcase == "scripts"
           extract_scripts(file, fname,  dirs)
-          setup_script_loader(file)
         else
           extract_yaml(file, fname, dirs)
         end
@@ -371,6 +392,12 @@ module RGSS
       revert_backup(files, dirs[:backup])
       echo("red", "#{e}")
     end
+  end
+
+  def self.decode_yaml(yfile, dirs)
+    index = load(:load_yaml_file, yfile)
+    str = Marshal.dump(index).gsub("\000", "null_byte_here")
+    exec("echo #{str}")
   end
 
   def self.serialize(operation, directory, files, force)
@@ -407,12 +434,10 @@ module RGSS
     }
 
     case operation
-    when :d
-      puts "d"
+    # when :yml2rb
+    #   puts decode_yaml(files[0], dirs)
     when :extract
       extract(files, dirs)
-      # convert(data, yaml, {})
-      # unpack_scripts(dirs, scripts, yaml_scripts, options)
     when :combine
       convert(yaml, data, {})
       pack_scripts(dirs, yaml_scripts, scripts, options)

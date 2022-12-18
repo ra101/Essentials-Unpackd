@@ -52,7 +52,7 @@ module Unpackd
     #   `false` otherwise
     def self.combined_action?(options)
       action_count = 0
-      action_count += 1 if options[:d]
+      # action_count += 1 if options[:yml2rb]
       action_count += 1 if options[:extract]
       action_count += 1 if options[:combine]
       action_count += 1 if options[:revert]

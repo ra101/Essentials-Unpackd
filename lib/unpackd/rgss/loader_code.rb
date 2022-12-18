@@ -27,16 +27,15 @@ module LoaderCode
     def self.get_script_loader
         script_loader = "#{traceback_report}" \
             "def load_scripts_from_folder(path)\n" \
-            "  puts Dir.pwd\n" \
-            "  files   = []\n" \
-            "  folders = []\n" \
+            "  files, folders = [], []\n" \
             "  Dir.foreach(path) do |f|\n" \
             "    next if f == '.' || f == '..'\n" \
-            "    (File.directory?(path + \"/\" + f)) ? folders.push(f) :  files.push(f)\n" \
+            "    (File.directory?(File.join(path, f))) ? folders.push(f) :  files.push(f)\n" \
             "  end\n" \
+            "\n" \
             "  files.sort!\n" \
             "  files.each do |f|\n" \
-            "    code = File.open(path + \"/\" + f, \"r\") { |file| file.read }\n" \
+            "    code = File.open(File.join(path, f), 'r') { |file| file.read }\n" \
             "    begin\n" \
             "      eval(code, nil, f)\n" \
             "    rescue ScriptError\n" \
@@ -46,45 +45,52 @@ module LoaderCode
             "      raise_traceback_error\n" \
             "    end\n" \
             "  end\n" \
+            "\n" \
             "  folders.sort!\n" \
             "  folders.each do |folder|\n" \
-            "    load_scripts_from_folder(path + \"/\" + folder)\n" \
+            "    load_scripts_from_folder(File.join(path,folder))\n" \
             "  end\n" \
             "end\n" \
             "\n" \
-            "load_scripts_from_folder(File.join(\"Data\", \"Scripts\"))"
+            "load_scripts_from_folder(File.join(Dir.pwd, File.join('Data', 'Scripts')))"
         return script_loader
     end
 
-    def self.get_yaml_loader
-        yaml_loader = "#{traceback_report}" \
-            "def load_yaml_from_folder(path)\n" \
-            "  files   = []\n" \
-            "  folders = []\n" \
-            "  Dir.foreach(path) do |f|\n" \
-            "    next if f == '.' || f == '..'\n" \
-            "    (File.directory?(path + \"/\" + f)) ? folders.push(f) :  files.push(f)\n" \
+    def self.get_yaml_loader(fname)
+        yaml_loader = "puts 'Helow'\n# Loader Script!\n\n#{traceback_report}" \
+            "def load_yaml_from_folder\n" \
+            "  path = File.join(Dir.pwd, File.join('Data', 'Scripts'))\n" \
+            "  ifile = File.join(path, '#{fname}.yaml')\n" \
+            "  unless ifile.exist?\n" \
+            "    raise ArgumentError.new(ifile)\n" \
             "  end\n" \
-            "  files.sort!\n" \
-            "  files.each do |f|\n" \
-            "    code = File.open(path + \"/\" + f, \"r\") { |file| file.read }\n" \
-            "    begin\n" \
-            "      eval(code, nil, f)\n" \
-            "    rescue ScriptError\n" \
-            "      raise ScriptError.new($!.message)\n" \
-            "    rescue\n" \
-            "      $!.message.sub!($!.message, traceback_report)\n" \
-            "      raise_traceback_error\n" \
-            "    end\n" \
+            "\n" \
+            "  unpackd_path = File.join(Dir.pwd, 'unpackd.exe')\n" \
+            "  unless unpackd_path.exist?\n" \
+            "    raise ArgumentError.new(unpackd_path)\n" \
             "  end\n" \
-            "  folders.sort!\n" \
-            "  folders.each do |folder|\n" \
-            "    load_yaml_from_folder(path + \"/\" + folder)\n" \
+            "\n" \
+            "  begin\n" \
+            "    code = %x( \"\#{unpackd_path}\" --d -f \"#{fname}\" )\n" \
+            "  rescue => e\n" \
+            "    raise SystemCallError.new(e)\n" \
+            "  end\n" \
+            "\n" \
+            "  if code.start_with?('# Error')\n" \
+            "    raise SystemCallError.new(Cannot Decode #{fname}!)\n" \
+            "  end\n" \
+            "\n" \
+            "  begin\n" \
+            "    Marshal.load(code.gsub(\"null_byte_here\", \"\000\"))\n" \
+            "  rescue ArgumentError\n" \
+            "    raise ArgumentError.new($!.message)\n" \
+            "  rescue\n" \
+            "    $!.message.sub!($!.message, traceback_report)\n" \
+            "    raise_traceback_error\n" \
             "  end\n" \
             "end\n" \
             "\n" \
-            "load_yaml_from_folder(File.join(\"Data\", \"Scripts\"))"
+            "load_yaml_from_folder"
         return yaml_loader
     end
-
 end
