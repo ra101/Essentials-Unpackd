@@ -38,7 +38,7 @@ Options:
   -t, --project-type=<s>    Project type (xp|vx|ace)
   -D, --database=<s>        Only work on the given database
   -f, --force               Update target even when source is older than target
-  -V, --verbose             Print verbose information while processing
+  -V, --silent             Do not output any information while processing
   -v, --version             Print version and exit
   -h, --help                Show this message
 ```

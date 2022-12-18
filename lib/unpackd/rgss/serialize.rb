@@ -41,7 +41,7 @@ module RGSS
   end
 
   def self.echo(color="white", line)
-    $formatador.display_line("[#{color}]#{line}[/]") if $VERBOSE
+    $formatador.display_line("[#{color}]#{line}[/]") unless $SILENT
   end
 
   def self.sanitize_filename(filename)

@@ -51,7 +51,7 @@ EOS
   opt :extract, 'Unpack binary RPG Maker data to YAML', short: 'e'
   opt :files, 'File Names for .rxfiles to operate on', short: 'f', type: :strings, default: ["*"]
   opt :force, 'Used with `--combine` to will Pack Data Forcefully'
-  opt :verbose, 'Print verbose information while processing', short: 'V'
+  opt :silent, 'Do not output any information while processing', short: 's'
   opt :d, 'Do Not Use! Encode Single YAML file'
 end
 
@@ -81,5 +81,5 @@ else
   Optimist.die('Error: Zero files Selected!') if files.empty?
 end
 
-$VERBOSE = opts[:verbose] if not opts[:d]
+$SILENT = opts[:silent] if not opts[:d]
 RGSS.serialize(action, project, files, opts[:force])
