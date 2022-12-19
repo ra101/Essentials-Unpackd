@@ -1,26 +1,23 @@
 # Essentials Unpack'd
-_A tool to pack and unpack binary RPG Maker project data to and from YAML so it can be version-controlled and collaborated on._
 
-`unpackd` consists of 3 parts:
-
-* RPG library (stub classes for serialization of RPG Maker game data)
-* RGSS library (some more classes for RPG Maker serialization)
-* `unpackd` (the script you call on the frontend)
-
-## Credit to SiCrane
-The RPG and RGSS libraries were originally taken from [SiCrane's YAML importer/exporter](http://www.gamedev.net/topic/646333-rpg-maker-vx-ace-data-conversion-utility/) on the [gamedev.net forums](http://www.gamedev.net/index). Though `unpackd` is starting to drift from the original libraries, SiCrane still gets original credit for the grand majority of the work that `unpackd` does.
-
-## Installation
-
-
-```sh
-$ git clone https://github.com/ra101/Essentials-Unpackd.git
-$ cd Essentials-Unpackd
-$ gem install bundler
-$ bundle install
-```
+_A tool for a Pokemon Essentials project, to **extract** data binaries (`.rxdata`) to readable `.rb` and `.yaml` files and to **combine** it back. This makes project to be version-controlled and to be collaborated on._
 
 ## Usage
+
+This is great for teams that are collaborating on an RPG Maker project. Just add a few steps to your existing workflow:
+
+* Checkout the project from version control
+* Run `unpackd --pack` on the project to re-pack it for the RPG Maker editor
+* Load up RPG Maker and do whatever you're going to do
+* Save the project
+* Run `unpackd --unpack` on the project
+* Commit everything to version control
+
+...now your project can be forked/merged in a much more safe/sane way, and you don't have to have someone bottlenecking the entire process.
+
+**Note:** You can now safely ignore the 'Data/' directory using the ignore file for the version control software you are using (.gitignore, .hgignore, .cvsignore -- whichever applies) as the 'Data/' directory is no longer required to rebuild the project locally.
+
+
 
 ```
 $ bundle exec unpackd --help
@@ -59,22 +56,40 @@ bundle exec unpackd --pack --project ~/Documents/RPGVXAce/Project1 --project-typ
 
 ...this will take all of the YAML files in (PROJECT)/YAML (and all of the scripts in (PROJECT)/Scripts) and repack all of your (PROJECT)/Data/ files. You can trust this to completely reassemble your Data/ directory as long as both the Scripts/ and YAML/ directories remain intact.
 
+
+
+## Credits
+
+**Essentials Unpack'd** is quite different from original files and libs, but Authors must be credited for the grand majority of the work that `unpackd` does, without them this wound have not been possible.
+
+- **Howard "SiCrane" Jeng** for original [YAML importer/exporter](https://www.gamedev.net/forums/topic/646333-rpg-maker-vx-ace-data-conversion-utility/), serialization, data conversion.
+- **Aaron Patterson** for `psych 2.0.0` bug fixes.
+- **Andrew Kesterson** for converting a simple forum post to working version controlled ruby gem!
+- **Rachel Wall** for code optimizing and maintaining since 2014.
+- **Maruno** for all process regarding `Scripts.rxdata`, extract, combine and loader.
+
+
+
+## Dev-Installation
+
+```bash
+$ git clone https://github.com/ra101/Essentials-Unpackd.git
+$ cd Essentials-Unpackd
+$ gem install bundler
+$ bundle install
+```
+
+
+
 ## Workflow
 
 ### General
 
-This is great for teams that are collaborating on an RPG Maker project. Just add a few steps to your existing workflow:
+`unpackd` consists of 3 parts:
 
-* Checkout the project from version control
-* Run `unpackd --pack` on the project to re-pack it for the RPG Maker editor
-* Load up RPG Maker and do whatever you're going to do
-* Save the project
-* Run `unpackd --unpack` on the project
-* Commit everything to version control
-
-...now your project can be forked/merged in a much more safe/sane way, and you don't have to have someone bottlenecking the entire process.
-
-**Note:** You can now safely ignore the 'Data/' directory using the ignore file for the version control software you are using (.gitignore, .hgignore, .cvsignore -- whichever applies) as the 'Data/' directory is no longer required to rebuild the project locally.
+* RPG library (stub classes for serialization of RPG Maker game data)
+* RGSS library (some more classes for RPG Maker serialization)
+* `unpackd` (the script you call on the frontend)
 
 ### Avoiding Map Collisions
 
