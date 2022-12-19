@@ -43,12 +43,9 @@ Usage:
 
 Options:
 EOS
-
-  # NOTE: The `--action` option is deprecated and will likely be removed in the
-  #   future.
-  opt :action, 'Action to perform on the project (pack|unpack)', type: String
   opt :combine, 'Pack YAML into binary RPG Maker data', short: 'c'
   opt :extract, 'Unpack binary RPG Maker data to YAML', short: 'e'
+  opt :backup, 'Make Backup for .rxdata files', short: 'b'
   opt :revert, 'Revert .rxdata from Backup Folder', short: 'r'
   opt :files, 'File Names for .rxfiles to operate on', short: 'f', type: :strings, default: ["*"]
   opt :force, 'Used with `--combine` to will Pack Data Forcefully'
@@ -60,14 +57,16 @@ project = File.expand_path(Dir.pwd)
 project = "D:/code.RA/pokemon-essentials"
 action = :combine if opts[:combine]
 action = :extract if opts[:extract]
+action = :backup if opts[:backup]
+action = :revert if opts[:revert]
 # action = :yml2rb if opts[:yml2rb]
 
 if action.nil?
-  Optimist.die('Either `--combine`, `--extract` or `--revert` must be Specified!')
+  Optimist.die('Either `--combine`, `--extract`, `--backup` or `--revert` must be Specified!')
 end
 
 if Unpackd::Utils.combined_action?(opts)
-  Optimist.die('Use Either `--combine`, `--extract` or `--revert`, Only One!')
+  Optimist.die('Use Either `--combine`, `--extract`, `--backup` or `--revert`, Only One!')
 end
 
 if opts[:force] and not opts[:combine]
@@ -78,16 +77,17 @@ if Unpackd::Utils.invalid_project?(project)
   Optimist.die("#{project} is not a valid RPG Maker project")
 end
 
-if opts[:extract]
-  files += Unpackd::Utils.get_rxfile_paths(opts[:files], project)
-
-if opts[:combine]
-  files += Unpackd::Utils.get_ymlfile_paths(opts[:files], project)
+if opts[:extract] or opts[:backup]
+  files = Unpackd::Utils.get_rxfile_paths(opts[:files], project)
+elsif opts[:combine]
+  files = Unpackd::Utils.get_ymlfile_paths(opts[:files], project)
+end
 
 if opts[:revert]
   files = Unpackd::Utils.get_backup_paths(opts[:files], project)
 else
-  files = Unpackd::Utils.get_scripts_paths(opts[:files], project)
+  files += Unpackd::Utils.get_scripts_paths(opts[:files], project)
+end
 
 $SILENT = opts[:silent] # if not opts[:yml2rb]
 RGSS.serialize(action, project, files, opts[:force])

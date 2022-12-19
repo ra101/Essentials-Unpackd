@@ -77,6 +77,7 @@ module Unpackd
       action_count += 1 if options[:extract]
       action_count += 1 if options[:combine]
       action_count += 1 if options[:revert]
+      action_count += 1 if options[:backup]
       return action_count > 1
     end
 

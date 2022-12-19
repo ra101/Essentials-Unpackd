@@ -363,7 +363,8 @@ module RGSS
       if fname.downcase == "scripts" and data.length < 10
         next echo("yellow", "Scripts.rxdata is Loader, Backup Canceled!")
       end
-      bfile = File.join(backup_dir, File.basename("#{file}.backup"))
+      bext = if file.end_with?('.backup') then "" else ".backup" end
+      bfile = File.join(backup_dir, File.basename("#{file}#{bext}"))
       dump(:dump_data_file, bfile, data)
     end
   end
@@ -371,13 +372,13 @@ module RGSS
   def self.revert_backup(files, backup_dir)
     echo("yellow", "Reverting Backup for #{files.map {|f| File.basename(f, ".*")}}")
     files.each do |file|
-      bfile = File.join(backup_dir, File.basename("#{file}.backup"))
+      bext = if file.end_with?('.backup') then "" else ".backup" end
+      bfile = File.join(backup_dir, File.basename("#{file}#{bext}"))
       dump(:dump_data_file, file, load(:load_data_file, bfile))
     end
   end
 
   def self.extract(files, dirs)
-
     make_backup(files, dirs[:backup])
     begin
       files.each do |file|
@@ -434,13 +435,17 @@ module RGSS
     }
 
     case operation
-    # when :yml2rb
-    #   puts decode_yaml(files[0], dirs)
     when :extract
       extract(files, dirs)
     when :combine
       convert(yaml, data, {})
       pack_scripts(dirs, yaml_scripts, scripts, options)
+    when :revert
+      revert_backup(files, dirs[:backup])
+    when :backup
+      make_backup(files, dirs[:backup])
+    # when :yml2rb
+    #   puts decode_yaml(files[0], dirs)
     else
       fail "Unrecognized Operation :#{operation}"
     end

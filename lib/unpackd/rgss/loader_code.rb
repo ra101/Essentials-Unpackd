@@ -71,7 +71,7 @@ module LoaderCode
             "  end\n" \
             "\n" \
             "  begin\n" \
-            "    code = %x( \"\#{unpackd_path}\" --d -f \"#{fname}\" )\n" \
+            "    code = %x( \"\#{unpackd_path}\" --yml2rb -f \"#{fname}\" )\n" \
             "  rescue => e\n" \
             "    raise SystemCallError.new(e)\n" \
             "  end\n" \
