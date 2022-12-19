@@ -36,20 +36,19 @@ class Numeric
 end
 
 module RGSS
+
+  SCRIPTS_FNAME = "Scripts"
+  RX_EXT = ".rxdata"
+  RB_EXT = ".rb"
+  YML_EXT = ".yaml"
+  BK_EXT = ".backup"
+
   def self.change_ext(file, new_ext)
     File.basename(file, '.*') << new_ext
   end
 
   def self.echo(color="white", line)
     $formatador.display_line("[#{color}]#{line}[/]") unless $SILENT
-  end
-
-  def self.sanitize_filename(filename)
-    filename.gsub(/[^0-9A-Za-z]+/, '_')
-  end
-
-  def self.files_with_extension(directory, extension)
-    Dir.entries(directory).select { |file| File.extname(file) == extension }
   end
 
   def self.inflate(str)
@@ -157,52 +156,54 @@ module RGSS
     return filename
   end
 
-  def self.unpack_scripts(dirs, src, dest, options)
-    src_file = File.join(dirs[:data], src)
-    dest_file = File.join(dirs[:yaml], dest)
-    fail "Missing #{src}" unless File.exist?(src_file)
+  def self.filename_to_title(filename)
+    filename = filename.bytes.pack('U*')
+    title = ""
+    if filename[/^[^_]*_(.+)$/]
+      title = $~[1]
+      title = title[0..-4] if title.end_with?(".rb")
+      title = title.strip
+    end
+    title = "unnamed" if !title || title.empty?
+    title.gsub!(/&bs;/, "\\")
+    title.gsub!(/&fs;/, "/")
+    title.gsub!(/&cn;/, ":")
+    title.gsub!(/&as;/, "*")
+    title.gsub!(/&qm;/, "?")
+    title.gsub!(/&dq;/, "\"")
+    title.gsub!(/&lt;/, "<")
+    title.gsub!(/&gt;/, ">")
+    title.gsub!(/&po;/, "|")
+    return title
+  end
 
-    script_entries = load(:load_data_file, src_file)
-    check_time = !options[:force] && File.exist?(dest_file)
-    oldest_time = File.mtime(dest_file) if check_time
+  def self.aggregate_from_folder(path, scripts, level = 0)
+    # A DFS to get all Scripts!
 
-    file_map     = Hash.new(-1)
-    script_index = []
-    script_code  = {}
-
-    idx = 0
-    script_entries.each do |script|
-      magic_number = idx += 1
-      script_name  = script[1]
-      code         = inflate(script[2])
-
-      script_name.force_encoding('utf-8')
-
-      if code.length > 0
-        filename = script_name.empty? ? 'blank' : sanitize_filename(script_name)
-        key      = filename.upcase
-        value    = (file_map[key] += 1)
-        actual_filename = filename + (value == 0 ? "" : ".#{value}") + RUBY_EXT
-        script_index << [magic_number, script_name, actual_filename]
-
-        full_filename = File.join(dirs[:script], actual_filename)
-        script_code[full_filename] = code
-        check_time = false unless File.exist?(full_filename)
-        oldest_time = [File.mtime(full_filename), oldest_time].min if check_time
-      else
-        script_index << [magic_number, script_name, nil]
-      end
+    # Add all files and folder of current level
+    files, folders = [], []
+    Dir.foreach(path) do |f|
+      next if f == '.' || f == '..'
+      is_dir = File.directory?(File.join(path, f))
+      if is_dir then folders.push(f) else files.push(f) end
     end
 
-    src_time = File.mtime(src_file)
-    if check_time && (src_time - 1) < oldest_time
-      echo("yellow", "Skipping scripts to text")
-    else
-      echo("green", "Converting scripts to text")
-      dump(:dump_yaml_file, dest_file, script_index)
-      script_code.each do |file, code|
-        dump(:dump_raw_file, file, code)
-      end
+    # Aggregate individual script files into Scripts.rxdata
+    files.sort!
+    files.each do |f|
+      section_name = filename_to_title(f)
+      content = File.open(File.join(path, f), "rb") { |f2| f2.read }#.gsub(/\n/, "\r\n")
+      scripts << [rand(999_999), section_name, deflate(content)]
+    end
+
+    # Check each subfolder for scripts to aggregate
+    folders.sort!
+    folders.each do |f|
+      section_name = filename_to_title(f)
+      scripts << [rand(999_999), "==================", deflate("")] if level == 0
+      scripts << [rand(999_999), "", deflate("")] if level == 1
+      scripts << [rand(999_999), "[[ " + section_name + " ]]", deflate("")]
+      aggregate_from_folder(File.join(path, f), scripts, level + 1)
     end
   end
 
@@ -235,40 +236,14 @@ module RGSS
     end
   end
 
-  def self.process_file(file, src_file, dest_file, dest_ext, loader, dumper, options)
-    fbase = File.basename(file, File.extname(file)).downcase
-    formatador = Formatador.new
-    src_time = File.mtime(src_file)
-    if !options[:force] && File.exist?(dest_file) && (src_time - 1) < File.mtime(dest_file)
-      echo("yellow", "Skipping #{file}")
-    else
-      echo("green", "Converting #{file} to #{dest_ext}")
-      data = load(loader, src_file)
-      dump(dumper, dest_file, data)
-    end
-  end
-
-  def self.convert(src, dest, options)
-    files = files_with_extension(src[:directory], src[:ext])
-    files -= src[:exclude]
-
-    files.each do |file|
-      src_file = File.join(src[:directory], file)
-      dest_file = File.join(dest[:directory], change_ext(file, 'yaml'))
-
-      process_file(file, src_file, dest_file, dest[:ext], src[:load_file],
-                   dest[:dump_file], options)
-    end
-  end
-
   def self.extract_scripts(ifile, fname, dirs)
     scripts = load(:load_data_file, ifile)
     if scripts.length < 10
-      echo("red", "#{fname}.rxdata Already Extracted!")
+      echo("red", "#{fname}#{RX_EXT} Already Extracted!")
       return
     end
 
-    echo("green", "Extracting #{fname}.rxdata")
+    echo("green", "Extracting #{fname}#{RX_EXT}")
 
     # 0=main path, 1=subfolder, 2=sub-subfolder
     level = 0
@@ -310,12 +285,30 @@ module RGSS
       section_name ||= title.strip
       section_name = "unnamed" if !section_name || section_name.empty?
       file_num =  (i < scripts.length - 1) ? file_id.to_digits(3) : "999"
-      ofile = File.join(this_folder, "#{file_num}_#{section_name}.rb")
+      ofile = File.join(this_folder, "#{file_num}_#{section_name}#{RB_EXT}")
       dump(:dump_raw_file, ofile, script)
       file_id += 1
     end
 
     setup_script_loader(ifile)
+  end
+
+  def self.combine_scripts(ifile, fname, dirs, force)
+    scripts_data = load(:load_data_file, ifile)
+    info_str = "#{fname}#{RX_EXT} Already Combined! "
+    if scripts_data.length > 10
+      if force
+        echo("yellow", info_str)
+      else
+        echo("red", "#{info_str}Use `--force` to Pack Data Forcefully.")
+        return
+      end
+    end
+
+    scripts_data = []
+    aggregate_from_folder(dirs[:script], scripts_data)
+    echo("green", "Combining #{fname}#{RX_EXT}")
+    dump(:dump_data_file, ifile, scripts_data)
   end
 
   def self.setup_script_loader(ifile)
@@ -343,27 +336,34 @@ module RGSS
     #   if infated_code.class == String
     #     if infated_code.downcase.start_with?("# loader")
     #       puts infated_code
-    #       echo("red", "#{fname}.rxdata Already Extracted!")
+    #       echo("red", "#{fname}#{RX_EXT} Already Extracted!")
     #       return
     #     end
     #   end
     # end
 
-    echo("green", "Extracting #{fname}.rxdata")
-    ofile = File.join(dirs[:yaml], fname + ".yaml")
+    echo("green", "Extracting #{fname}#{RX_EXT}")
+    ofile = File.join(dirs[:yaml], fname + YML_EXT)
     dump(:dump_yaml_file, ofile, data)
 
     # setup_yaml_loader(fname, ifile)
+  end
+
+  def self.combine_yaml(ifile, fname, dirs)
+    data = load(:load_yaml_file, ifile)
+    echo("green", "Combining #{fname}#{YML_EXT}")
+    ofile = File.join(dirs[:data], fname + "#{RX_EXT}")
+    dump(:dump_data_file, ofile, data)
   end
 
   def self.make_backup(files, backup_dir)
     echo("yellow", "Making Backup for #{files.map {|f| File.basename(f, ".*")}}")
     files.each do |file|
       data, fname = load(:load_data_file, file), File.basename(file, ".*")
-      if fname.downcase == "scripts" and data.length < 10
-        next echo("yellow", "Scripts.rxdata is Loader, Backup Canceled!")
+      if fname.downcase == SCRIPTS_FNAME.downcase and data.length < 10
+        next echo("yellow", "#{SCRIPTS_FNAME}#{RX_EXT} is Loader, Backup Canceled!")
       end
-      bext = if file.end_with?('.backup') then "" else ".backup" end
+      bext = if file.end_with?(BK_EXT) then "" else BK_EXT end
       bfile = File.join(backup_dir, File.basename("#{file}#{bext}"))
       dump(:dump_data_file, bfile, data)
     end
@@ -372,7 +372,7 @@ module RGSS
   def self.revert_backup(files, backup_dir)
     echo("yellow", "Reverting Backup for #{files.map {|f| File.basename(f, ".*")}}")
     files.each do |file|
-      bext = if file.end_with?('.backup') then "" else ".backup" end
+      bext = if file.end_with?(BK_EXT) then "" else BK_EXT end
       bfile = File.join(backup_dir, File.basename("#{file}#{bext}"))
       dump(:dump_data_file, file, load(:load_data_file, bfile))
     end
@@ -383,7 +383,7 @@ module RGSS
     begin
       files.each do |file|
         fname = File.basename(file, ".*")
-        if fname.downcase == "scripts"
+        if fname.downcase == SCRIPTS_FNAME.downcase
           extract_scripts(file, fname,  dirs)
         else
           extract_yaml(file, fname, dirs)
@@ -401,6 +401,30 @@ module RGSS
     exec("echo #{str}")
   end
 
+  def self.combine(files, dirs, force)
+    rxfiles = [] # To be Used by Backup Functions
+    files.each do |file|
+      rxfiles += Dir[
+        File.join(dirs[:data], File.basename(file, ".*") + "#{RX_EXT}")
+    ]
+    end
+
+    make_backup(rxfiles, dirs[:backup])
+    begin
+      files.each do |file|
+        fname = File.basename(file, ".*")
+        if fname.downcase == SCRIPTS_FNAME.downcase
+          combine_scripts(file, fname,  dirs, force)
+        else
+          combine_yaml(file, fname, dirs)
+        end
+      end
+    rescue => e
+      revert_backup(rxfiles, dirs[:backup])
+      echo("red", "#{e}")
+    end
+  end
+
   def self.serialize(operation, directory, files, force)
     $formatador = Formatador.new
     self.setup_classes
@@ -416,30 +440,11 @@ module RGSS
 
     dirs.each_value { |d| FileUtils.mkdir(d) unless File.directory?(d) }
 
-    yaml_scripts = SCRIPTS_BASE + YAML_EXT
-    yaml = {
-      directory: dirs[:yaml],
-      exclude:   [yaml_scripts],
-      ext:       YAML_EXT,
-      load_file: :load_yaml_file,
-      dump_file: :dump_yaml_file,
-    }
-
-    scripts = SCRIPTS_BASE + XP_DATA_EXT
-    data = {
-      directory: dirs[:data],
-      exclude:   [scripts],
-      ext:       XP_DATA_EXT,
-      load_file: :load_data_file,
-      dump_file: :dump_data_file,
-    }
-
     case operation
     when :extract
       extract(files, dirs)
     when :combine
-      convert(yaml, data, {})
-      pack_scripts(dirs, yaml_scripts, scripts, options)
+      combine(files, dirs, force)
     when :revert
       revert_backup(files, dirs[:backup])
     when :backup

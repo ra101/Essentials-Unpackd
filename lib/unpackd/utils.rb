@@ -22,25 +22,29 @@ module Unpackd
   # Defines various utility methods for use by `unpackd`.
   module Utils
 
+    def self.get_rxscripts_path(dir)
+      data_dir =  File.join(File.realpath(dir), 'Data')
+      rxscripts_path = File.join(data_dir, 'Scripts.rxdata')
+      return [Dir[rxscripts_path][0]]
+    end
+
     # Get All rxfiles, Except for Scripts.rxdata
     def self.get_rxfile_paths(filenames, dir)
       file_paths, data_dir =  [], File.join(File.realpath(dir), 'Data')
       filenames.each do |fname|
-        next if fname.downcase == "scripts"
         fname = File.basename(fname, ".*") << '.rxdata'
         file_paths += Dir[File.join(data_dir, fname)]
       end
-      return file_paths.uniq
+      return file_paths.uniq - get_rxscripts_path(dir)
     end
 
     def self.get_scripts_paths(filenames, dir)
       file_paths, data_dir =  [], File.join(File.realpath(dir), 'Data')
       filenames.each do |fname|
-        next unless fname.downcase == "scripts"
         fname = File.basename(fname, ".*") << '.rxdata'
         file_paths += Dir[File.join(data_dir, fname)]
       end
-      return file_paths.uniq
+      return file_paths.uniq & get_rxscripts_path(dir)
     end
 
     def self.get_ymlfile_paths(filenames, dir)

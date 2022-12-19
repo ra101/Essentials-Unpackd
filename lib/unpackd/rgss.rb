@@ -162,6 +162,35 @@ end
 
 
 module RGSS
+
+  # creates an empty class in a potentially nested scope
+  def self.process(root, name, *args)
+    if args.length > 0
+      process(root.const_get(name), *args)
+    else
+      root.const_set(name, Class.new) unless root.const_defined?(name, false)
+    end
+  end
+
+  # RGSS/Essentials data structures
+  [
+    [:RPG, :Actor], [:RPG, :Animation], [:RPG, :Animation, :Frame],
+    [:RPG, :Animation, :Timing],  [:RPG, :Armor], [:RPG, :AudioFile],
+    [:RPG, :BGM], [:RPG, :BGS], [:RPG, :Class],[:RPG, :CommonEvent], [:RPG, :Enemy],
+    [:RPG, :Enemy, :Action], [:RPG, :Event], [:RPG, :Event, :Page],
+    [:RPG, :Event, :Page, :Condition], [:RPG, :Event, :Page, :Graphic],
+    [:RPG, :Item], [:RPG, :Map], [:RPG, :MapInfo], [:RPG, :MoveCommand],
+    [:RPG, :MoveRoute], [:RPG, :SE], [:RPG, :Skill], [:RPG, :State],
+    [:RPG, :System, :TestBattler], [:RPG, :System, :Words], [:RPG, :Tileset],
+    [:RPG, :Troop], [:RPG, :Troop, :Page], [:RPG, :Troop, :Page, :Condition],
+    [:RPG, :UsableItem], [:RPG, :Weapon], [:PBAnimTiming], [:PBAnimationPlayerX]
+   ].each { |x| process(Object, *x) }
+
+   $FLOW_CLASSES = [
+     Color, Tone, RPG::BGM, RPG::BGS, RPG::MoveCommand, RPG::SE,
+     PBAnimations, PBAnimation, PBAnimTiming
+   ]
+
   def self.remove_defined_method(scope, name)
     if scope.instance_methods(false).include?(name)
       scope.send(:remove_method, name)
@@ -177,29 +206,6 @@ module RGSS
     scope.send(:remove_const, sym) if scope.const_defined?(sym)
     scope.send(:const_set, sym, value)
   end
-
-  # creates an empty class in a potentially nested scope
-  def self.process(root, name, *args)
-    if args.length > 0
-      process(root.const_get(name), *args)
-    else
-      root.const_set(name, Class.new) unless root.const_defined?(name, false)
-    end
-  end
-
-  # RGSS/Essentials data structures
-  [
-   [:RPG, :Actor], [:RPG, :Animation], [:RPG, :Animation, :Frame],
-   [:RPG, :Animation, :Timing],  [:RPG, :Armor], [:RPG, :AudioFile],
-   [:RPG, :BGM], [:RPG, :BGS], [:RPG, :Class],[:RPG, :CommonEvent], [:RPG, :Enemy],
-   [:RPG, :Enemy, :Action], [:RPG, :Event], [:RPG, :Event, :Page],
-   [:RPG, :Event, :Page, :Condition], [:RPG, :Event, :Page, :Graphic],
-   [:RPG, :Item], [:RPG, :Map], [:RPG, :MapInfo], [:RPG, :MoveCommand],
-   [:RPG, :MoveRoute], [:RPG, :SE], [:RPG, :Skill], [:RPG, :State],
-   [:RPG, :System, :TestBattler], [:RPG, :System, :Words], [:RPG, :Tileset],
-   [:RPG, :Troop], [:RPG, :Troop, :Page], [:RPG, :Troop, :Page, :Condition],
-   [:RPG, :UsableItem], [:RPG, :Weapon], [:PBAnimTiming], [:PBAnimationPlayerX]
-  ].each { |x| process(Object, *x) }
 
   def self.setup_classes
     reset_method(RPG::System, :reduce_string, lambda do |string|
@@ -222,16 +228,6 @@ module RGSS
 
     Unpackd::Utils::BasicCoder.set_ivars_methods
   end
-
-  $FLOW_CLASSES = [
-    Color, Tone, RPG::BGM, RPG::BGS, RPG::MoveCommand, RPG::SE,
-    PBAnimations, PBAnimation, PBAnimTiming
-  ]
-
-  SCRIPTS_BASE = 'Scripts'
-  XP_DATA_EXT  = '.rxdata'
-  YAML_EXT     = '.yaml'
-  RUBY_EXT     = '.rb'
 
   def self.get_data_dir(base)
     File.join(base, 'Data')

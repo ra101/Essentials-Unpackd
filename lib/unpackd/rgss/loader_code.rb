@@ -57,7 +57,7 @@ module LoaderCode
     end
 
     def self.get_yaml_loader(fname)
-        yaml_loader = "puts 'Helow'\n# Loader Script!\n\n#{traceback_report}" \
+        yaml_loader = "# Loader Script!\n\n#{traceback_report}" \
             "def load_yaml_from_folder\n" \
             "  path = File.join(Dir.pwd, File.join('Data', 'Scripts'))\n" \
             "  ifile = File.join(path, '#{fname}.yaml')\n" \
