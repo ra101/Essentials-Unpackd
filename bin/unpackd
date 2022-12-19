@@ -43,18 +43,18 @@ Usage:
 
 Options:
 EOS
+  opt :project, "Pokemon Essentials project folder", short: "d", type: String
   opt :combine, 'Pack YAML into binary RPG Maker data', short: 'c'
   opt :extract, 'Unpack binary RPG Maker data to YAML', short: 'e'
   opt :backup, 'Make Backup for .rxdata files', short: 'b'
   opt :revert, 'Revert .rxdata from Backup Folder', short: 'r'
   opt :files, 'File Names for .rxfiles to operate on', short: 'f', type: :strings, default: ["*"]
-  opt :force, 'Used with `--combine` to will Pack Data Forcefully'
+  opt :force, 'Used with `--combine` to will Pack Data Forcefully', short: 'F'
   opt :silent, 'Do not output any information while processing', short: 's'
   # opt :yml2rb, 'Encode Single YAML file'
 end
 
-project = File.expand_path(Dir.pwd)
-project = "D:/code.RA/pokemon-essentials"
+project = File.expand_path(opts[:project] || Dir.pwd)
 action = :combine if opts[:combine]
 action = :extract if opts[:extract]
 action = :backup if opts[:backup]

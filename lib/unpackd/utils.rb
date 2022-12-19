@@ -68,7 +68,7 @@ module Unpackd
     # Check if the project dir has `Game.rxproj`
     def self.invalid_project?(directory)
       file = Dir["#{File.join(File.expand_path(directory), 'Game.rxproj')}"][0]
-      return file == "Game.rxproj"
+      return (file.nil? or File.basename(file) != "Game.rxproj")
     end
 
     # @param options [Hash{Symbol=>Object}] the options hash to check for
