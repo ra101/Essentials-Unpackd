@@ -6,12 +6,12 @@ require 'unpackd/version'
 Gem::Specification.new do |spec|
   spec.name          = 'unpackd'
   spec.version       = Unpackd::VERSION
-  spec.authors       = ["ra101", "Howard Jeng", "Andrew Kesterson", 'Solistra']
+  spec.authors       = ["Parth Agarwal", "Howard Jeng", "Andrew Kesterson", "Rachel Wall"]
   spec.email         = ['ping@ra101.dev']
-  spec.summary       = %q{Pack and unpack Pokemon Essentials Data files}
-  spec.description   = %(
-    A tool to pack and unpack binary Pokemon Essentials Data to and from YAML so
-    it can be version-controlled and collaborated on.
+  spec.summary       = %q{Combine and Extract Pokemon Essentials Data files}
+  spec.description   = (
+    "A tool to combine and extract binary Pokemon Essentials Data " \
+     "to .rb & .yaml, So it can be version-controlled and collaborated on."
   ).gsub(/\s+/, ' ').strip
   spec.homepage      = "https://github.com/ra101/unpackd"
   spec.license       = 'MIT'
