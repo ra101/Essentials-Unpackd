@@ -1,6 +1,10 @@
-# Essentials Unpack'd
 
-_A tool for a Pokemon Essentials project, to **extract** data binaries (`.rxdata`) to readable `.rb` and `.yaml` files and to **combine** it back. This makes project to be version-controlled and to be collaborated on._
+
+<div align="center">
+    <h1> Essentials Unpack'd </h1>
+    <p></i>A tool for a Pokémon Essentials project, to <b>extract</b> data binaries (<code>.rxdata</code>) to readable <code>.rb</code> and <code>.yaml</code> files and to <b>combine</b> it back. This makes project to be version-controlled and to be collaborated on.<i></p><br/>
+    <img src="https://img.shields.io/badge/Made%20with-Ruby-DE3F24?style=for-the-badge&logo=ruby" alt="Made with Ruby"> <a href="https://essentialsdocs.fandom.com/"><img src="https://img.shields.io/badge/Essentials-v20.1-ffcb05?style=for-the-badge&labelColor=3c5aa6" alt="Essentials v20.1"></a> <a href="https://github.com/ra101/Essentials-Unpackd/releases/latest/download/Unpackd.exe"><img src="https://img.shields.io/badge/download-639?style=for-the-badge&logo=windows" alt="download"></a> <a href="https://github.com/ra101/PokeShelf/releases/download/v1.2.4/PokeShelf.zip"><img src="https://img.shields.io/badge/sponser-dd6633?style=for-the-badge&logo=buymeacoffee&logoColor=white" alt="download"></a>
+</div><br/>
 
 ## Usage
 
@@ -56,13 +60,15 @@ bundle exec unpackd --pack --project ~/Documents/RPGVXAce/Project1 --project-typ
 
 ...this will take all of the YAML files in (PROJECT)/YAML (and all of the scripts in (PROJECT)/Scripts) and repack all of your (PROJECT)/Data/ files. You can trust this to completely reassemble your Data/ directory as long as both the Scripts/ and YAML/ directories remain intact.
 
+### Tips and Tricks
 
+add all tips here
 
 ## Credits
 
 **Essentials Unpack'd** is quite different from original files and libs, but Authors must be credited for the grand majority of the work that `unpackd` does, without them this wound have not been possible.
 
-- **Howard "SiCrane" Jeng** for original [YAML importer/exporter](https://www.gamedev.net/forums/topic/646333-rpg-maker-vx-ace-data-conversion-utility/), serialization, data conversion.
+- **Howard "SiCrane" Jeng** for original [YAML importer/exporter](https://www.gamedev.net/forums/topic/646333-rpg-maker-vx-ace-data-conversion-utility/); serialization, data conversion.
 - **Aaron Patterson** for `psych 2.0.0` bug fixes.
 - **Andrew Kesterson** for converting a simple forum post to working version controlled ruby gem!
 - **Rachel Wall** for code optimizing and maintaining since 2014.
