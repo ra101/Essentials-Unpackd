@@ -114,6 +114,8 @@ Options:
 
 - Using `---files` flag again and again for the same files, can be a bit effortful, create a batch file or makefile for your workflow, I have added a [makefile.template](https://raw.githubusercontent.com/ra101/Essentials-Unpackd/core/makefile.template) in the repo, as a base to add on.
 
+- Suppose your game throws an error, but you couldn't note it down. You try to run the game again, but now `Game.exe` just shows a blank screen and it exits. This happens due to caching of binary files, Now, I don't know how to delete/ignore those cache but, I know, by `--combine --force` again *(or by `--combine` then `--extract`, if you are working with loader)*, `Game.exe` assumes it is a new binary. *(Warn: This would corrupt backup)*
+
 - In Case, you don't use a VCS (big mistake), be aware of backups! Suppose you made changes to a file, and combined it to run the game and it did not work (right now the file is bad but the backup is good). but if you make another change and combined forcefully, even if the file is good, the backup becomes bad!
 
 <br/>
