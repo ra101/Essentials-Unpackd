@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
+require 'fileutils'
+
+dist_path = File.join(Dir.pwd, 'dist')
+FileUtils.mkdir(dist_path) unless File.directory?(dist_path)
 
 exec(
     "ocra --console --gem-full=./unpackd.gemspec --output ./dist/unpackd.exe "\
