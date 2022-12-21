@@ -2,7 +2,7 @@
 
 <div align="center">
     <h1> Essentials Unpack'd </h1>
-    <p><i><code>unpackd</code> is tool for a Pokémon Essentials, to <b>extract</b> data binaries (<code>.rxdata</code>) to readable <code>.rb</code> and <code>.yaml</code> files and to <b>combine</b> it back, Thus making your game to be version-controlled and to be collaborated on.</i></p><br/>
+    <p><i><code>unpackd</code> is a tool for the Pokémon Essentials, to <b>extract</b> data binaries (<code>.rxdata</code>) to readable <code>.rb</code> and <code>.yaml</code> files and to <b>combine</b> them back, Thus making your game to be version-controlled and to be collaborated on.</i></p><br/>
     <img src="https://img.shields.io/badge/Made%20with-Ruby-DE3F24?style=for-the-badge&logo=ruby" alt="Made with Ruby"> <a href="https://essentialsdocs.fandom.com/"><img src="https://img.shields.io/badge/Essentials-v20.1-ffcb05?style=for-the-badge&labelColor=3c5aa6&logo=pokemon" alt="Essentials v20.1"></a> <a href="https://github.com/ra101/Essentials-Unpackd/releases/latest/download/unpackd.exe"><img src="https://img.shields.io/badge/Download-v3.0.0-grey?style=for-the-badge&logo=windows&labelColor=639" alt="download"></a> <a href="https://www.buymeacoffee.com/ra101"><img src="https://img.shields.io/badge/sponser-💝-ffdd99?style=for-the-badge&logo=buymeacoffee&logoColor=white&labelColor=dd6633" alt="download"></a>
 </div><br/>
 
