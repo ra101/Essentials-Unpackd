@@ -6,7 +6,8 @@ require "unpackd/rgss/loader_code.rb"
 require "unpackd/rgss/serialize.rb"
 require "unpackd/utils.rb"
 
-# `unpackd` packs and unpacks binary RPG Maker project data to and from YAML
-# so that it can be version-controlled and collaborated on.
+# `unpackd` is a tool for a Pokémon Essentials, to extract data binaries (.rxdata)
+#   to readable .rb and .yaml files and to combine it back, thus making
+#   your game to be version-controlled and to be collaborated on.
 module Unpackd
 end

@@ -2,67 +2,112 @@
 
 <div align="center">
     <h1> Essentials Unpack'd </h1>
-    <p></i>A tool for a Pokémon Essentials project, to <b>extract</b> data binaries (<code>.rxdata</code>) to readable <code>.rb</code> and <code>.yaml</code> files and to <b>combine</b> it back. This makes project to be version-controlled and to be collaborated on.<i></p><br/>
-    <img src="https://img.shields.io/badge/Made%20with-Ruby-DE3F24?style=for-the-badge&logo=ruby" alt="Made with Ruby"> <a href="https://essentialsdocs.fandom.com/"><img src="https://img.shields.io/badge/Essentials-v20.1-ffcb05?style=for-the-badge&labelColor=3c5aa6" alt="Essentials v20.1"></a> <a href="https://github.com/ra101/Essentials-Unpackd/releases/latest/download/Unpackd.exe"><img src="https://img.shields.io/badge/download-639?style=for-the-badge&logo=windows" alt="download"></a> <a href="https://github.com/ra101/PokeShelf/releases/download/v1.2.4/PokeShelf.zip"><img src="https://img.shields.io/badge/sponser-dd6633?style=for-the-badge&logo=buymeacoffee&logoColor=white" alt="download"></a>
+    <p></i><code>unpackd</code> is tool for a Pokémon Essentials, to <b>extract</b> data binaries (<code>.rxdata</code>) to readable <code>.rb</code> and <code>.yaml</code> files and to <b>combine</b> it back, Thus making your game to be version-controlled and to be collaborated on.<i></p><br/>
+    <img src="https://img.shields.io/badge/Made%20with-Ruby-DE3F24?style=for-the-badge&logo=ruby" alt="Made with Ruby"> <a href="https://essentialsdocs.fandom.com/"><img src="https://img.shields.io/badge/Essentials-v20.1-ffcb05?style=for-the-badge&labelColor=3c5aa6&logo=pokemon" alt="Essentials v20.1"></a> <a href="https://github.com/ra101/Essentials-Unpackd/releases/latest/download/unpackd.exe"><img src="https://img.shields.io/badge/Download-v3.0.0-grey?style=for-the-badge&logo=windows&labelColor=639" alt="download"></a> <a href="https://www.buymeacoffee.com/ra101"><img src="https://img.shields.io/badge/sponser-💝-ffdd99?style=for-the-badge&logo=buymeacoffee&logoColor=white&labelColor=dd6633" alt="download"></a>
 </div><br/>
 
 ## Usage
 
-This is great for teams that are collaborating on an RPG Maker project. Just add a few steps to your existing workflow:
+```bash
+$ unpackd.exe --help
+Essentials Unpack\'d v3.0.0
 
-* Checkout the project from version control
-* Run `unpackd --pack` on the project to re-pack it for the RPG Maker editor
-* Load up RPG Maker and do whatever you're going to do
-* Save the project
-* Run `unpackd --unpack` on the project
-* Commit everything to version control
-
-...now your project can be forked/merged in a much more safe/sane way, and you don't have to have someone bottlenecking the entire process.
-
-**Note:** You can now safely ignore the 'Data/' directory using the ignore file for the version control software you are using (.gitignore, .hgignore, .cvsignore -- whichever applies) as the 'Data/' directory is no longer required to rebuild the project locally.
-
-
-
-```
-$ bundle exec unpackd --help
-unpackd packs and unpacks binary RPG Maker project data to and from YAML so
-that it can be version-controlled and collaborated on.
+`unpackd` is a tool \for a Pokémon Essentials, to extract data binaries (.rxdata)
+  to readable .rb and .yaml files and to combine it back, thus making
+  your game to be version-controlled and to be collaborated on.
 
 Usage:
-        bundle exec unpackd {--pack|--unpack} [options]
+        unpackd {--extract|--combine|-b|-r} [options]
 
 Options:
-  -a, --action=<s>          Action to perform on the project (pack|unpack)
-  -p, --pack                Pack YAML into binary RPG Maker data
-  -u, --unpack              Unpack binary RPG Maker data to YAML
-  -d, --project=<s>         RPG Maker project directory
-  -t, --project-type=<s>    Project type (xp|vx|ace)
-  -D, --database=<s>        Only work on the given database
-  -f, --force               Update target even when source is older than target
-  -V, --silent             Do not output any information while processing
-  -v, --version             Print version and exit
-  -h, --help                Show this message
+  -e, --extract        Extract given binaries(.rxdata) into individual .yaml/.rb
+  -c, --combine        Combine given .yaml/.rb files into binaries(.rxdata)
+  -b, --backup         Make Backup \for given binary(.rxdata) files
+  -r, --revert         Revert given binary(.rxdata) from Backup Folder
+  
+  -d, --project=<s>    Essentials project path. (default: Current Folder)
+  -f, --files=<s+>     File Names \for .rxdata/.yaml/.rb to operate on. (default: *)
+  
+  -F, --force          Used with `--combine` to Pack Data Forcefully
+  -s, --silent         Do not output any information \while processing
+  
+  -v, --version        Print version and \exit
+  -h, --help           Show this message
 ```
 
-For example, to unpack an RPG Maker VX Ace project in ~/Documents/RPGVXAce/Project1:
 
-```
- bundle exec unpackd --unpack --project ~/Documents/RPGVXAce/Project1 --project-type ace
-```
 
-...this will expand all of the project's binary Data/ files into (PROJECT)/YAML/ as YAML files; scripts will be unpacked as individual .rb files into (PROJECT)/Scripts/.
+### Examples
 
-To take a previously unpacked project and pack it back up:
+- To **Extract** `Scripts.rxdata` and `Tilesets.rxdata` of a game in *"D:\\Examples\\MyEssentialsGame"*:
 
-```
-bundle exec unpackd --pack --project ~/Documents/RPGVXAce/Project1 --project-type ace
-```
+> ```bash
+>$ unpackd.exe --extract --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
+> ```
+> 
+> This will create 3 Folders, `Backup`, `Scripts` and `YAML` in *"D:\\Examples\\MyEssentialsGame**\\Data**"* folder.
+>
+> - Firstly, Backup files will be created in `Data\Backup` (`*.rxdata.backup` files)
+>- `Scripts.rxdata`  consists of many ruby scripts and these now will be extracted to individual `.rb` files placed in grouped folders within  `Data\Scripts` folder.
+>  - `Scripts.rxdata` will be replaced with a loader file, this file can read the individual `.rb` files in `Data\Scripts` Folder, Therefore making Game.exe still playable! *This would not work, if game is encrypted !*
+>- `Tilesets.rxdata` will be extracted to a readable `Tilesets.yaml` file within  `Data\YAML` folder.
+> - If at any point, the scripts is unable to perform extraction, mentioned Backup files will be reinstated.
 
-...this will take all of the YAML files in (PROJECT)/YAML (and all of the scripts in (PROJECT)/Scripts) and repack all of your (PROJECT)/Data/ files. You can trust this to completely reassemble your Data/ directory as long as both the Scripts/ and YAML/ directories remain intact.
+
+
+- To **Combine** { ruby scripts in `Data/Scripts`  to `Scripts.rxdata `} and { `Tilesets.yaml` to `Tilesets.rxdata` }:
+
+> ```bash
+> $ unpackd.exe --combine --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
+> ```
+>
+> This will create 3 Folders, `Backup`, `Scripts` and `YAML` in *"D:\\Examples\\MyEssentialsGame**\\Data**"* folder.
+>
+> - Firstly, Backup files will be created in `Data\Backup` (`*.rxdata.backup` files)
+> - Will check if the `Scripts.rxdata` is a loader file or a already data packed file.
+>   - If in case, it is already a packed data file, this operation will skipped, unless `--force` flag is passed along.
+>   - Else, ruby scripts will be reintegrated back into `Scripts.rxdata`
+> - `Tilesets.yaml` will be converted back to `Tilesets.rxdata`.
+> - If at any point, the scripts is unable to perform combination, mentioned Backup files will be reinstated.
+
+
+
+- To create a general **Backup** for `Scripts.rxdata` and `Tilesets.rxdata`:
+
+> ```bash
+> $ unpackd.exe --backup --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
+> ```
+>
+
+
+
+- To **Revert** a already created backup of `Scripts.rxdata` and `Tilesets.rxdata`:
+
+> ```bash
+> $ unpackd.exe --revert --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
+> ```
+
+
 
 ### Tips and Tricks
 
-add all tips here
+- Put `unpackd.exe` in game directory, it a light file and it removes the need to pass `--project` flag
+
+- Currently only `Tilesets` and `Scripts` are understandable, I am not sure about rest of files.
+
+- To add `YAML` in your version control add `!Data/YAML/` to `.gitignore`.
+
+  - ```bash
+    $ echo !Data/YAML/ >> .gitignore
+    ```
+
+- Extracted `Scripts.rxdata` cannot be loaded into RPG Maker, even with loader file, always combine it, if you plan on using scripteditor of RPG Maker.
+
+- Using `---files` flag again and again for same files, can be a bit effortful, create a batch file or makefile for you wokrflow, I have add a [makefile.template](https://raw.githubusercontent.com/ra101/Essentials-Unpackd/core/makefile.template) in the repo, as a base to add on.
+
+- In Case, you if don't use a VCS (big mistake), be aware of backups! Suppose you made changes to a file, combined it to run the game and it did not work (right now file is bad but backup is good). but if you make another change and combined forcefully, even if the file is good, backup becomes bad!
+
+
 
 ## Credits
 
@@ -87,15 +132,26 @@ $ bundle install
 
 
 
+## Dev-Usage
+
+```bash
+$ bundle exec unpackd {--extract|--combine|-b|-r} [options]
+```
+
+
+
 ## Workflow
 
 ### General
 
-`unpackd` consists of 3 parts:
+`unpackd` consists of following parts:
 
-* RPG library (stub classes for serialization of RPG Maker game data)
-* RGSS library (some more classes for RPG Maker serialization)
-* `unpackd` (the script you call on the frontend)
+* `rgss.rb` : Stub classes for serialization of RPG Maker game data
+* `serialize.rb` : core mechanice behind data processing
+* `psych.rb`: Overriding Psych lib to make output more readable
+* `unpackd`: The script you call on the frontend.
+
+
 
 ### Avoiding Map Collisions
 
@@ -144,3 +200,7 @@ This means that changing the ID number assigned to a map (and, thereby, making i
 From SiCrane:
 
 > I used cygwin's ruby 1.9.3 and the Psych 2.0.0 ruby gem, which appears to be the most recent version. However, Psych 2.0.0 has some bugs that impacted the generated YAML (one major and one minor) which I monkey patched, and since I was already rewriting the Psych code, I added some functionality to make the generated YAML prettier. Long story short, this code probably won't work with any version of Psych but 2.0.0.
+
+```
+
+```

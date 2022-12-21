@@ -27,7 +27,7 @@ require 'optimist'
 require 'unpackd'
 
 version_string = <<-EOS.chomp!
-unpackd #{Unpackd::VERSION}
+Essentials Unpack\'d v#{Unpackd::VERSION}
 EOS
 
 opts = Optimist.options do
@@ -35,21 +35,24 @@ opts = Optimist.options do
   banner <<-EOS
 #{version_string}
 
-unpackd packs and unpacks binary RPG Maker project data to and from YAML so
-that it can be version-controlled and collaborated on.
+`unpackd` is a tool for a Pokémon Essentials, to extract data binaries (.rxdata)
+  to readable .rb and .yaml files and to combine it back, thus making
+  your game to be version-controlled and to be collaborated on.
 
 Usage:
-        unpackd {--pack|--unpack} [options]
+        unpackd {--extract|--combine|-b|-r} [options]
 
 Options:
 EOS
-  opt :project, "Pokemon Essentials project folder", short: "d", type: String
-  opt :combine, 'Pack YAML into binary RPG Maker data', short: 'c'
-  opt :extract, 'Unpack binary RPG Maker data to YAML', short: 'e'
-  opt :backup, 'Make Backup for .rxdata files', short: 'b'
-  opt :revert, 'Revert .rxdata from Backup Folder', short: 'r'
-  opt :files, 'File Names for .rxfiles to operate on', short: 'f', type: :strings, default: ["*"]
-  opt :force, 'Used with `--combine` to will Pack Data Forcefully', short: 'F'
+  opt :extract, 'Extract given binaries(.rxdata) into individual .yaml/.rb', short: 'e'
+  opt :combine, 'Combine given .yaml/.rb files into binaries(.rxdata)', short: 'c'
+  opt :backup, 'Make Backup for given binary(.rxdata) files', short: 'b'
+  opt :revert, 'Revert given binary(.rxdata) from Backup Folder', short: 'r'
+
+  opt :project, "Essentials project path. (default: Current Folder)", short: "d", type: String
+  opt :files, 'File Names for .rxdata/.yaml/.rb to operate on.', short: 'f', type: :strings, default: ["*"]
+
+  opt :force, 'Used with `--combine` to Pack Data Forcefully', short: 'F'
   opt :silent, 'Do not output any information while processing', short: 's'
   # opt :yml2rb, 'Encode Single YAML file'
 end
