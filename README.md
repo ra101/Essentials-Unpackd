@@ -49,7 +49,7 @@ Options:
 >$ unpackd.exe --extract --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
 > ```
 > 
-> This will create 3 Folders, `Backup`, `Scripts`, and `YAML` in the *"D:\\Examples\\MyEssentialsGame**\\Data**"* folder.
+> This will create 3 Folders, `Backup`, `Scripts`, and `YAML` in the *"D:\\Examples\\MyEssentialsGame<b>\\Data</b>"* folder.
 >
 > - Firstly, Backup files will be created in `Data\Backup` (`*.rxdata.backup` files)
 >- `Scripts.rxdata`  consists of many ruby scripts and these now will be extracted to individual `.rb` files placed in grouped folders within the `Data\Scripts` folder.
@@ -67,7 +67,7 @@ Options:
 > $ unpackd.exe --combine --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
 > ```
 >
-> This will create 3 Folders, `Backup`, `Scripts`, and `YAML` in the *"D:\\Examples\\MyEssentialsGame**\\Data**"* folder.
+> This will create 3 Folders, `Backup`, `Scripts`, and `YAML` in the *"D:\\Examples\\MyEssentialsGame<b>\\Data</b>"* folder.
 >
 > - Firstly, Backup files will be created in `Data\Backup` (`*.rxdata.backup` files)
 > - Will check if the `Scripts.rxdata` is a loader file or an already data-packed file.
@@ -90,7 +90,7 @@ Options:
 <br/>
 <br/>
 
-- To **Revert** a already created backup of `Scripts.rxdata` and `Tilesets.rxdata`:
+- To **Revert** an already created backup of `Scripts.rxdata` and `Tilesets.rxdata`:
 
 > ```bash
 > $ unpackd.exe --revert --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
