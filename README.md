@@ -14,8 +14,8 @@
 $ unpackd.exe --help
 Essentials Unpack\'d v3.0.0
 
-`unpackd` is a tool \for a Pokémon Essentials, to extract data binaries (.rxdata)
-  to readable .rb and .yaml files and to combine it back, thus making
+`unpackd` is a tool \for Pokémon Essentials, to extract data binaries (.rxdata)
+  to readable .rb and .yaml files and to combine them back, thus making
   your game to be version-controlled and to be collaborated on.
 
 Usage:
@@ -49,13 +49,13 @@ Options:
 >$ unpackd.exe --extract --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
 > ```
 > 
-> This will create 3 Folders, `Backup`, `Scripts` and `YAML` in *"D:\\Examples\\MyEssentialsGame**\\Data**"* folder.
+> This will create 3 Folders, `Backup`, `Scripts`, and `YAML` in the *"D:\\Examples\\MyEssentialsGame**\\Data**"* folder.
 >
 > - Firstly, Backup files will be created in `Data\Backup` (`*.rxdata.backup` files)
->- `Scripts.rxdata`  consists of many ruby scripts and these now will be extracted to individual `.rb` files placed in grouped folders within  `Data\Scripts` folder.
->  - `Scripts.rxdata` will be replaced with a loader file, this file can read the individual `.rb` files in `Data\Scripts` Folder, Therefore making Game.exe still playable! *This would not work, if game is encrypted !*
+>- `Scripts.rxdata`  consists of many ruby scripts and these now will be extracted to individual `.rb` files placed in grouped folders within the `Data\Scripts` folder.
+>  - `Scripts.rxdata` will be replaced with a loader file, this file can read the individual `.rb` files in the `Data\Scripts` Folder, Therefore making Game.exe still playable! *This would not work, if the game is encrypted !*
 >- `Tilesets.rxdata` will be extracted to a readable `Tilesets.yaml` file within  `Data\YAML` folder.
-> - If at any point, the scripts is unable to perform extraction, mentioned Backup files will be reinstated.
+> - If at any point, unpackd is unable to perform the extraction, mentioned Backup files will be reinstated.
 
 
 <br/>
@@ -67,15 +67,14 @@ Options:
 > $ unpackd.exe --combine --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
 > ```
 >
-> This will create 3 Folders, `Backup`, `Scripts` and `YAML` in *"D:\\Examples\\MyEssentialsGame**\\Data**"* folder.
+> This will create 3 Folders, `Backup`, `Scripts`, and `YAML` in the *"D:\\Examples\\MyEssentialsGame**\\Data**"* folder.
 >
 > - Firstly, Backup files will be created in `Data\Backup` (`*.rxdata.backup` files)
-> - Will check if the `Scripts.rxdata` is a loader file or a already data packed file.
->   - If in case, it is already a packed data file, this operation will skipped, unless `--force` flag is passed along.
+> - Will check if the `Scripts.rxdata` is a loader file or an already data-packed file.
+>   - If in case, it is already a packed data file, this operation will skip, unless `--force` flag is passed along.
 >   - Else, ruby scripts will be reintegrated back into `Scripts.rxdata`
 > - `Tilesets.yaml` will be converted back to `Tilesets.rxdata`.
-> - If at any point, the scripts is unable to perform combination, mentioned Backup files will be reinstated.
-
+> - If at any point, the script is unable to perform a combination, mentioned Backup files will be reinstated.
 
 <br/>
 <br/>
@@ -101,9 +100,9 @@ Options:
 
 ### Tips and Tricks
 
-- Put `unpackd.exe` in game directory, it a light file and it removes the need to pass `--project` flag
+- Put `unpackd.exe` in the game directory, it is a light file and it removes the need to pass the `--project` flag
 
-- Currently only `Tilesets` and `Scripts` are understandable, I am not sure about rest of files.
+- Currently, only `Tilesets` and `Scripts` are understandable, I am not sure about the rest of the files.
 
 - To add `YAML` in your version control add `!Data/YAML/` to `.gitignore`.
 
@@ -111,23 +110,23 @@ Options:
     $ echo !Data/YAML/ >> .gitignore
     ```
 
-- Extracted `Scripts.rxdata` cannot be loaded into RPG Maker, even with loader file, always combine it, if you plan on using scripteditor of RPG Maker.
+- Extracted `Scripts.rxdata` cannot be loaded into RPG Maker, even with the loader file, always combine it, if you plan on using the script editor of RPG Maker.
 
-- Using `---files` flag again and again for same files, can be a bit effortful, create a batch file or makefile for you wokrflow, I have add a [makefile.template](https://raw.githubusercontent.com/ra101/Essentials-Unpackd/core/makefile.template) in the repo, as a base to add on.
+- Using `---files` flag again and again for the same files, can be a bit effortful, create a batch file or makefile for your workflow, I have added a [makefile.template](https://raw.githubusercontent.com/ra101/Essentials-Unpackd/core/makefile.template) in the repo, as a base to add on.
 
-- In Case, you if don't use a VCS (big mistake), be aware of backups! Suppose you made changes to a file, combined it to run the game and it did not work (right now file is bad but backup is good). but if you make another change and combined forcefully, even if the file is good, backup becomes bad!
+- In Case, you don't use a VCS (big mistake), be aware of backups! Suppose you made changes to a file, and combined it to run the game and it did not work (right now the file is bad but the backup is good). but if you make another change and combined forcefully, even if the file is good, the backup becomes bad!
 
 <br/>
 
 ## Credits
 
-**Essentials Unpack'd** is quite different from original files and libs, but Authors must be credited for the grand majority of the work that `unpackd` does, without them this wound have not been possible.
+**Essentials Unpack'd** is quite different from original files and libs, but Authors must be credited for the grand majority of the work that `unpackd` do, without them this would have not been possible.
 
 - **Howard "SiCrane" Jeng** for original [YAML importer/exporter](https://www.gamedev.net/forums/topic/646333-rpg-maker-vx-ace-data-conversion-utility/); serialization, data conversion.
 - **Aaron Patterson** for `psych 2.0.0` bug fixes.
-- **Andrew Kesterson** for converting a simple forum post to working version controlled ruby gem!
-- **Rachel Wall** for code optimizing and maintaining since 2014.
-- **Maruno** for all process regarding `Scripts.rxdata`, extract, combine and loader.
+- **Andrew Kesterson** for converting a simple forum post to a working version-controlled ruby gem!
+- **Rachel Wall** for code optimization and maintenance since 2014.
+- **Maruno** for all processes regarding `Scripts.rxdata`, extract, combine, and loader.
 
 <br/>
 
