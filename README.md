@@ -2,9 +2,11 @@
 
 <div align="center">
     <h1> Essentials Unpack'd </h1>
-    <p></i><code>unpackd</code> is tool for a Pokémon Essentials, to <b>extract</b> data binaries (<code>.rxdata</code>) to readable <code>.rb</code> and <code>.yaml</code> files and to <b>combine</b> it back, Thus making your game to be version-controlled and to be collaborated on.<i></p><br/>
+    <p><i><code>unpackd</code> is tool for a Pokémon Essentials, to <b>extract</b> data binaries (<code>.rxdata</code>) to readable <code>.rb</code> and <code>.yaml</code> files and to <b>combine</b> it back, Thus making your game to be version-controlled and to be collaborated on.</i></p><br/>
     <img src="https://img.shields.io/badge/Made%20with-Ruby-DE3F24?style=for-the-badge&logo=ruby" alt="Made with Ruby"> <a href="https://essentialsdocs.fandom.com/"><img src="https://img.shields.io/badge/Essentials-v20.1-ffcb05?style=for-the-badge&labelColor=3c5aa6&logo=pokemon" alt="Essentials v20.1"></a> <a href="https://github.com/ra101/Essentials-Unpackd/releases/latest/download/unpackd.exe"><img src="https://img.shields.io/badge/Download-v3.0.0-grey?style=for-the-badge&logo=windows&labelColor=639" alt="download"></a> <a href="https://www.buymeacoffee.com/ra101"><img src="https://img.shields.io/badge/sponser-💝-ffdd99?style=for-the-badge&logo=buymeacoffee&logoColor=white&labelColor=dd6633" alt="download"></a>
 </div><br/>
+
+<br/>
 
 ## Usage
 
@@ -35,9 +37,11 @@ Options:
   -h, --help           Show this message
 ```
 
-
+<br/>
 
 ### Examples
+
+<br/>
 
 - To **Extract** `Scripts.rxdata` and `Tilesets.rxdata` of a game in *"D:\\Examples\\MyEssentialsGame"*:
 
@@ -54,6 +58,8 @@ Options:
 > - If at any point, the scripts is unable to perform extraction, mentioned Backup files will be reinstated.
 
 
+<br/>
+<br/>
 
 - To **Combine** { ruby scripts in `Data/Scripts`  to `Scripts.rxdata `} and { `Tilesets.yaml` to `Tilesets.rxdata` }:
 
@@ -71,6 +77,8 @@ Options:
 > - If at any point, the scripts is unable to perform combination, mentioned Backup files will be reinstated.
 
 
+<br/>
+<br/>
 
 - To create a general **Backup** for `Scripts.rxdata` and `Tilesets.rxdata`:
 
@@ -80,6 +88,8 @@ Options:
 >
 
 
+<br/>
+<br/>
 
 - To **Revert** a already created backup of `Scripts.rxdata` and `Tilesets.rxdata`:
 
@@ -87,7 +97,7 @@ Options:
 > $ unpackd.exe --revert --project "D:\Examples\MyEssentialsGame" --files scripts tilesets
 > ```
 
-
+<br/>
 
 ### Tips and Tricks
 
@@ -107,7 +117,7 @@ Options:
 
 - In Case, you if don't use a VCS (big mistake), be aware of backups! Suppose you made changes to a file, combined it to run the game and it did not work (right now file is bad but backup is good). but if you make another change and combined forcefully, even if the file is good, backup becomes bad!
 
-
+<br/>
 
 ## Credits
 
@@ -119,7 +129,7 @@ Options:
 - **Rachel Wall** for code optimizing and maintaining since 2014.
 - **Maruno** for all process regarding `Scripts.rxdata`, extract, combine and loader.
 
-
+<br/>
 
 ## Dev-Installation
 
@@ -130,7 +140,7 @@ $ gem install bundler
 $ bundle install
 ```
 
-
+<br/>
 
 ## Dev-Usage
 
@@ -138,6 +148,7 @@ $ bundle install
 $ bundle exec unpackd {--extract|--combine|-b|-r} [options]
 ```
 
+<br/>
 
 
 ## Workflow
