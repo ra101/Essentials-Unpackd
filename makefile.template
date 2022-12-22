@@ -1,8 +1,8 @@
 UNPACKD = unpackd.exe --files scripts
-RPGXP = "C:\Program Files (x86)\Enterbrain\RPGXP\RPGXP.exe"
+RMXP = "C:\Program Files (x86)\Enterbrain\RPGXP\RPGXP.exe"
 NOHUP = cmd /c start
 
-drun: unpackd.exe scripts_extract.rb Game.exe
+drun: unpackd.exe Game.exe
 	$(UNPACKD) --combine --force && $(UNPACKD) --extract
 	$(NOHUP) Game.exe debug
 
@@ -10,8 +10,8 @@ run: unpackd.exe Game.exe
 	$(UNPACKD) --combine
 	$(NOHUP) Game.exe
 
-rpg: unpackd.exe Game.rxproj
+rmxp: unpackd.exe Game.rxproj
 	$(UNPACKD) --combine
-	$(NOHUP) $(RPGXP) Game.rxproj
+	$(NOHUP) $(RMXP) Game.rxproj
 
 # dist: comming soon!
