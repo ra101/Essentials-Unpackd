@@ -40,20 +40,30 @@ opts = Optimist.options do
   your game to be version-controlled and to be collaborated on.
 
 Usage:
-        unpackd {--extract|--combine|-b|-r} [options]
+        unpackd.exe [options] {--extract|--combine|-b|-r}
 
-Options:
+Commands:
 EOS
   opt :extract, 'Extract given binaries(.rxdata) into individual .yaml/.rb', short: 'e'
   opt :combine, 'Combine given .yaml/.rb files into binaries(.rxdata)', short: 'c'
+banner <<-EOS
+‎
+EOS
   opt :backup, 'Make Backup for given binary(.rxdata) files', short: 'b'
-  opt :revert, 'Revert given binary(.rxdata) from Backup Folder', short: 'r'
-
+  opt :revert, "Revert given binary(.rxdata) from Backup Folder", short: 'r'
+banner <<-EOS
+\nOptions:
+EOS
   opt :project, "Essentials project path. (default: Current Folder)", short: "d", type: String
   opt :files, 'File Names for .rxdata/.yaml/.rb to operate on.', short: 'f', type: :strings, default: ["*"]
-
+banner <<-EOS
+‎
+EOS
   opt :force, 'Used with `--combine` to Pack Data Forcefully', short: 'F'
   opt :silent, 'Do not output any information while processing', short: 's'
+banner <<-EOS
+‎
+EOS
   # opt :yml2rb, 'Encode Single YAML file'
 end
 

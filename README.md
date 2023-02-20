@@ -19,21 +19,23 @@ Essentials Unpack\'d v3.0.0
   your game to be version-controlled and to be collaborated on.
 
 Usage:
-        unpackd {--extract|--combine|-b|-r} [options]
+        unpackd.exe [options] {--extract|--combine|-b|-r}
 
-Options:
+Commands:
   -e, --extract        Extract given binaries(.rxdata) into individual .yaml/.rb
   -c, --combine        Combine given .yaml/.rb files into binaries(.rxdata)
-  -b, --backup         Make Backup \for given binary(.rxdata) files
+
+  -b, --backup         Make Backup for given binary(.rxdata) files
   -r, --revert         Revert given binary(.rxdata) from Backup Folder
-  
+
+Options:
   -d, --project=<s>    Essentials project path. (default: Current Folder)
-  -f, --files=<s+>     File Names \for .rxdata/.yaml/.rb to operate on. (default: *)
-  
+  -f, --files=<s+>     File Names for .rxdata/.yaml/.rb to operate on. (Default: *)
+
   -F, --force          Used with `--combine` to Pack Data Forcefully
-  -s, --silent         Do not output any information \while processing
-  
-  -v, --version        Print version and \exit
+  -s, --silent         Do not output any information while processing
+
+  -v, --version        Print version and exit
   -h, --help           Show this message
 ```
 
